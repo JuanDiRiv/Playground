@@ -1,114 +1,155 @@
 [
-  {
-    "id": "html-semantic-vs-divs",
-    "topicSlug": "html",
-    "prompt": "Explain the difference between using semantic HTML elements (e.g. <article>, <section>, <nav>) versus generic <div>s. Give two concrete benefits.",
-    "modelAnswer": "Semantic elements convey meaning to browsers, assistive tech and crawlers. Benefits: (1) accessibility — screen readers can navigate landmarks; (2) SEO — search engines weight semantic structure; (3) maintainability — code is self-documenting. Divs are presentational and convey no meaning.",
-    "difficulty": "easy",
-    "tags": ["semantics", "accessibility"]
-  },
-  {
-    "id": "html-form-validation",
-    "topicSlug": "html",
-    "prompt": "What native HTML attributes can you use for client-side form validation, and why should validation always be repeated on the server?",
-    "modelAnswer": "Attributes: required, type (email/url/number), pattern, min/max, minlength/maxlength, step. Server-side validation is mandatory because client-side checks can be bypassed (DevTools, curl). Client-side improves UX; server-side enforces integrity.",
-    "difficulty": "easy",
-    "tags": ["forms", "security"]
-  },
-  {
-    "id": "css-flex-vs-grid",
-    "topicSlug": "css",
-    "prompt": "When would you reach for Flexbox versus CSS Grid? Give one example for each.",
-    "modelAnswer": "Flexbox is one-dimensional (row OR column) — ideal for nav bars, button groups, distributing items along a single axis. Grid is two-dimensional (rows AND columns) — ideal for page layouts, dashboards, image galleries. They compose well: Grid for the macro layout, Flex for components inside cells.",
-    "difficulty": "medium",
-    "tags": ["layout", "flexbox", "grid"]
-  },
-  {
-    "id": "css-specificity",
-    "topicSlug": "css",
-    "prompt": "Explain CSS specificity. Order from highest to lowest: !important, inline style, ID selector, class selector, element selector.",
-    "modelAnswer": "Order (highest to lowest): 1) !important (overrides everything except later !important), 2) inline style (1,0,0,0), 3) ID selector (0,1,0,0), 4) class/attribute/pseudo-class (0,0,1,0), 5) element/pseudo-element (0,0,0,1). Avoid !important; prefer increasing specificity intentionally or using cascade layers.",
-    "difficulty": "medium",
-    "tags": ["specificity", "cascade"]
-  },
-  {
-    "id": "js-var-let-const",
-    "topicSlug": "javascript",
-    "prompt": "Compare var, let and const in terms of scope, hoisting and reassignment. Give one example where you'd choose each.",
-    "modelAnswer": "var: function-scoped, hoisted as undefined, can be redeclared and reassigned. let: block-scoped, hoisted but in TDZ until declaration, reassignable, no redeclaration in the same scope. const: block-scoped, TDZ, no reassignment (but objects can mutate). Modern code: const by default, let when reassignment is needed, avoid var.",
-    "difficulty": "easy",
-    "tags": ["fundamentals", "scope"]
-  },
-  {
-    "id": "js-event-loop",
-    "topicSlug": "javascript",
-    "prompt": "Walk through what happens when you run: console.log(1); setTimeout(() => console.log(2), 0); Promise.resolve().then(() => console.log(3)); console.log(4);",
-    "modelAnswer": "Output: 1, 4, 3, 2. The synchronous code runs first (1 then 4). Then the microtask queue (Promise callbacks) drains before the macrotask queue (setTimeout). So 3 (microtask) prints before 2 (macrotask), even with delay 0.",
-    "difficulty": "medium",
-    "tags": ["async", "event-loop"]
-  },
-  {
-    "id": "js-closures",
-    "topicSlug": "javascript",
-    "prompt": "What is a closure in JavaScript? Give a practical use case beyond counters.",
-    "modelAnswer": "A closure is a function that retains access to variables from its lexical scope even after that scope has exited. Practical uses: data privacy (module pattern with private state), partial application/currying, memoization caches, factory functions producing pre-configured handlers, debounce/throttle implementations.",
-    "difficulty": "medium",
-    "tags": ["fundamentals", "functions"]
-  },
-  {
-    "id": "react-useeffect-deps",
-    "topicSlug": "react",
-    "prompt": "Explain the dependency array of useEffect. What's the difference between [], [value] and omitting it?",
-    "modelAnswer": "Empty [] runs once after mount (and cleanup on unmount). [value] runs on mount and whenever `value` changes (referential equality). Omitting runs after every render — usually a bug. Effects should list every reactive value they read; missing deps cause stale closures, extra deps cause unnecessary work.",
-    "difficulty": "medium",
-    "tags": ["hooks"]
-  },
-  {
-    "id": "react-server-components",
-    "topicSlug": "react",
-    "prompt": "What are React Server Components and how do they differ from SSR?",
-    "modelAnswer": "RSCs render only on the server and never ship JS to the client. They can access server-only resources (DB, secrets) directly. SSR renders the same Client Component tree on the server for the initial HTML, then hydrates the same JS on the client. RSC reduces bundle size and lets you compose Server + Client components in one tree.",
-    "difficulty": "hard",
-    "tags": ["rsc", "architecture"]
-  },
-  {
-    "id": "next-server-actions",
-    "topicSlug": "nextjs",
-    "prompt": "What are Server Actions in Next.js 16 and when would you use them instead of a Route Handler?",
-    "modelAnswer": "Server Actions are async functions marked with 'use server' that run on the server and can be invoked directly from Server or Client Components, typically as form actions. They auto-handle CSRF, integrate with React's transitions and revalidation, and avoid manual fetch/JSON plumbing. Use Route Handlers (route.ts) for public APIs, webhooks, or non-form clients.",
-    "difficulty": "medium",
-    "tags": ["server-actions", "mutations"]
-  },
-  {
-    "id": "ts-generics",
-    "topicSlug": "typescript",
-    "prompt": "Why use generics instead of `any`? Show with a function signature.",
-    "modelAnswer": "Generics preserve the relationship between input and output types, while `any` discards all type information. Example: `function identity<T>(x: T): T { return x; }` — calling identity(42) returns number, identity('x') returns string. With `any`, both would return `any` and the caller loses autocomplete and type-checks downstream.",
-    "difficulty": "medium",
-    "tags": ["generics", "types"]
-  },
-  {
-    "id": "ts-utility-types",
-    "topicSlug": "typescript",
-    "prompt": "Explain Partial<T>, Required<T>, Pick<T,K> and Omit<T,K> with one realistic example each.",
-    "modelAnswer": "Partial<T> makes all props optional — useful for update payloads. Required<T> makes all required — useful when consuming a config after defaults are filled. Pick<T,K> selects a subset of keys — useful for DTOs. Omit<T,K> removes keys — useful to strip server-only fields before sending to client. They compose: e.g. Omit<Partial<User>, 'id'>.",
-    "difficulty": "medium",
-    "tags": ["utility-types"]
-  },
-  {
-    "id": "node-streams",
-    "topicSlug": "node",
-    "prompt": "Why are Node.js streams useful and what are the four main types?",
-    "modelAnswer": "Streams process data in chunks instead of loading everything into memory — essential for large files, network IO, and back-pressure handling. Four types: Readable (source), Writable (sink), Duplex (both, e.g. TCP socket), Transform (Duplex that mutates, e.g. zlib gzip). Pipe them together with .pipe() or stream/promises for async/await.",
-    "difficulty": "medium",
-    "tags": ["streams", "io"]
-  },
-  {
-    "id": "node-error-handling",
-    "topicSlug": "node",
-    "prompt": "How do you handle uncaught errors in async code in Node.js? Mention rejected promises and EventEmitter errors.",
-    "modelAnswer": "Always wrap awaited promises in try/catch or attach .catch(). Listen to 'unhandledRejection' and 'uncaughtException' as last-resort logs and graceful shutdown — never to ignore errors. EventEmitters: attach an 'error' listener, otherwise the process crashes. For HTTP servers, surface errors via the response and a centralized error middleware.",
-    "difficulty": "hard",
-    "tags": ["errors", "async"]
-  }
+    {
+        "id": "html-semantic-vs-divs",
+        "topicSlug": "html",
+        "prompt": "Explain the difference between using semantic HTML elements (e.g. <article>, <section>, <nav>) versus generic <div>s. Give two concrete benefits.",
+        "modelAnswer": "Semantic elements convey meaning to browsers, assistive tech and crawlers. Benefits: (1) accessibility — screen readers can navigate landmarks; (2) SEO — search engines weight semantic structure; (3) maintainability — code is self-documenting. Divs are presentational and convey no meaning.",
+        "difficulty": "easy",
+        "tags": [
+            "semantics",
+            "accessibility"
+        ]
+    },
+    {
+        "id": "html-form-validation",
+        "topicSlug": "html",
+        "prompt": "What native HTML attributes can you use for client-side form validation, and why should validation always be repeated on the server?",
+        "modelAnswer": "Attributes: required, type (email/url/number), pattern, min/max, minlength/maxlength, step. Server-side validation is mandatory because client-side checks can be bypassed (DevTools, curl). Client-side improves UX; server-side enforces integrity.",
+        "difficulty": "easy",
+        "tags": [
+            "forms",
+            "security"
+        ]
+    },
+    {
+        "id": "css-flex-vs-grid",
+        "topicSlug": "css",
+        "prompt": "When would you reach for Flexbox versus CSS Grid? Give one example for each.",
+        "modelAnswer": "Flexbox is one-dimensional (row OR column) — ideal for nav bars, button groups, distributing items along a single axis. Grid is two-dimensional (rows AND columns) — ideal for page layouts, dashboards, image galleries. They compose well: Grid for the macro layout, Flex for components inside cells.",
+        "difficulty": "medium",
+        "tags": [
+            "layout",
+            "flexbox",
+            "grid"
+        ]
+    },
+    {
+        "id": "css-specificity",
+        "topicSlug": "css",
+        "prompt": "Explain CSS specificity. Order from highest to lowest: !important, inline style, ID selector, class selector, element selector.",
+        "modelAnswer": "Order (highest to lowest): 1) !important (overrides everything except later !important), 2) inline style (1,0,0,0), 3) ID selector (0,1,0,0), 4) class/attribute/pseudo-class (0,0,1,0), 5) element/pseudo-element (0,0,0,1). Avoid !important; prefer increasing specificity intentionally or using cascade layers.",
+        "difficulty": "medium",
+        "tags": [
+            "specificity",
+            "cascade"
+        ]
+    },
+    {
+        "id": "js-var-let-const",
+        "topicSlug": "javascript",
+        "prompt": "Compare var, let and const in terms of scope, hoisting and reassignment. Give one example where you'd choose each.",
+        "modelAnswer": "var: function-scoped, hoisted as undefined, can be redeclared and reassigned. let: block-scoped, hoisted but in TDZ until declaration, reassignable, no redeclaration in the same scope. const: block-scoped, TDZ, no reassignment (but objects can mutate). Modern code: const by default, let when reassignment is needed, avoid var.",
+        "difficulty": "easy",
+        "tags": [
+            "fundamentals",
+            "scope"
+        ]
+    },
+    {
+        "id": "js-event-loop",
+        "topicSlug": "javascript",
+        "prompt": "Walk through what happens when you run: console.log(1); setTimeout(() => console.log(2), 0); Promise.resolve().then(() => console.log(3)); console.log(4);",
+        "modelAnswer": "Output: 1, 4, 3, 2. The synchronous code runs first (1 then 4). Then the microtask queue (Promise callbacks) drains before the macrotask queue (setTimeout). So 3 (microtask) prints before 2 (macrotask), even with delay 0.",
+        "difficulty": "medium",
+        "tags": [
+            "async",
+            "event-loop"
+        ]
+    },
+    {
+        "id": "js-closures",
+        "topicSlug": "javascript",
+        "prompt": "What is a closure in JavaScript? Give a practical use case beyond counters.",
+        "modelAnswer": "A closure is a function that retains access to variables from its lexical scope even after that scope has exited. Practical uses: data privacy (module pattern with private state), partial application/currying, memoization caches, factory functions producing pre-configured handlers, debounce/throttle implementations.",
+        "difficulty": "medium",
+        "tags": [
+            "fundamentals",
+            "functions"
+        ]
+    },
+    {
+        "id": "react-useeffect-deps",
+        "topicSlug": "react",
+        "prompt": "Explain the dependency array of useEffect. What's the difference between [], [value] and omitting it?",
+        "modelAnswer": "Empty [] runs once after mount (and cleanup on unmount). [value] runs on mount and whenever `value` changes (referential equality). Omitting runs after every render — usually a bug. Effects should list every reactive value they read; missing deps cause stale closures, extra deps cause unnecessary work.",
+        "difficulty": "medium",
+        "tags": [
+            "hooks"
+        ]
+    },
+    {
+        "id": "react-server-components",
+        "topicSlug": "react",
+        "prompt": "What are React Server Components and how do they differ from SSR?",
+        "modelAnswer": "RSCs render only on the server and never ship JS to the client. They can access server-only resources (DB, secrets) directly. SSR renders the same Client Component tree on the server for the initial HTML, then hydrates the same JS on the client. RSC reduces bundle size and lets you compose Server + Client components in one tree.",
+        "difficulty": "hard",
+        "tags": [
+            "rsc",
+            "architecture"
+        ]
+    },
+    {
+        "id": "next-server-actions",
+        "topicSlug": "nextjs",
+        "prompt": "What are Server Actions in Next.js 16 and when would you use them instead of a Route Handler?",
+        "modelAnswer": "Server Actions are async functions marked with 'use server' that run on the server and can be invoked directly from Server or Client Components, typically as form actions. They auto-handle CSRF, integrate with React's transitions and revalidation, and avoid manual fetch/JSON plumbing. Use Route Handlers (route.ts) for public APIs, webhooks, or non-form clients.",
+        "difficulty": "medium",
+        "tags": [
+            "server-actions",
+            "mutations"
+        ]
+    },
+    {
+        "id": "ts-generics",
+        "topicSlug": "typescript",
+        "prompt": "Why use generics instead of `any`? Show with a function signature.",
+        "modelAnswer": "Generics preserve the relationship between input and output types, while `any` discards all type information. Example: `function identity<T>(x: T): T { return x; }` — calling identity(42) returns number, identity('x') returns string. With `any`, both would return `any` and the caller loses autocomplete and type-checks downstream.",
+        "difficulty": "medium",
+        "tags": [
+            "generics",
+            "types"
+        ]
+    },
+    {
+        "id": "ts-utility-types",
+        "topicSlug": "typescript",
+        "prompt": "Explain Partial<T>, Required<T>, Pick<T,K> and Omit<T,K> with one realistic example each.",
+        "modelAnswer": "Partial<T> makes all props optional — useful for update payloads. Required<T> makes all required — useful when consuming a config after defaults are filled. Pick<T,K> selects a subset of keys — useful for DTOs. Omit<T,K> removes keys — useful to strip server-only fields before sending to client. They compose: e.g. Omit<Partial<User>, 'id'>.",
+        "difficulty": "medium",
+        "tags": [
+            "utility-types"
+        ]
+    },
+    {
+        "id": "node-streams",
+        "topicSlug": "node",
+        "prompt": "Why are Node.js streams useful and what are the four main types?",
+        "modelAnswer": "Streams process data in chunks instead of loading everything into memory — essential for large files, network IO, and back-pressure handling. Four types: Readable (source), Writable (sink), Duplex (both, e.g. TCP socket), Transform (Duplex that mutates, e.g. zlib gzip). Pipe them together with .pipe() or stream/promises for async/await.",
+        "difficulty": "medium",
+        "tags": [
+            "streams",
+            "io"
+        ]
+    },
+    {
+        "id": "node-error-handling",
+        "topicSlug": "node",
+        "prompt": "How do you handle uncaught errors in async code in Node.js? Mention rejected promises and EventEmitter errors.",
+        "modelAnswer": "Always wrap awaited promises in try/catch or attach .catch(). Listen to 'unhandledRejection' and 'uncaughtException' as last-resort logs and graceful shutdown — never to ignore errors. EventEmitters: attach an 'error' listener, otherwise the process crashes. For HTTP servers, surface errors via the response and a centralized error middleware.",
+        "difficulty": "hard",
+        "tags": [
+            "errors",
+            "async"
+        ]
+    }
 ]

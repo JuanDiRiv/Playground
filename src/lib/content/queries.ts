@@ -13,10 +13,7 @@ import {
 } from "@/lib/schemas/content";
 
 export async function listTopics(): Promise<Topic[]> {
-  const snap = await getAdminDb()
-    .collection("topics")
-    .orderBy("order")
-    .get();
+  const snap = await getAdminDb().collection("topics").orderBy("order").get();
   return snap.docs.map((doc) => TopicSchema.parse(doc.data()));
 }
 
@@ -44,9 +41,7 @@ export async function listExercises(slug: TopicSlug): Promise<Exercise[]> {
   return snap.docs.map((doc) => ExerciseSchema.parse(doc.data()));
 }
 
-export async function listChallenges(
-  slug: TopicSlug,
-): Promise<Challenge[]> {
+export async function listChallenges(slug: TopicSlug): Promise<Challenge[]> {
   const snap = await getAdminDb()
     .collection("topics")
     .doc(slug)

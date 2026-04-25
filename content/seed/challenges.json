@@ -1,64 +1,82 @@
 [
-  {
-    "id": "js-flatten",
-    "topicSlug": "javascript",
-    "type": "worker",
-    "title": "Flatten a nested array",
-    "description": "Implement `flatten(arr)` that returns a single-level array containing all elements at any depth. Cannot use Array.prototype.flat.",
-    "difficulty": "medium",
-    "targetTimeSec": 240,
-    "starter": {
-      "solution.js": "function flatten(arr) {\n  // TODO without using .flat()\n}\n"
+    {
+        "id": "js-flatten",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Flatten a nested array",
+        "description": "Implement `flatten(arr)` that returns a single-level array containing all elements at any depth. Cannot use Array.prototype.flat.",
+        "difficulty": "medium",
+        "targetTimeSec": 240,
+        "starter": {
+            "solution.js": "function flatten(arr) {\n  // TODO without using .flat()\n}\n"
+        },
+        "solution": "function flatten(arr) {\n  const out = [];\n  for (const x of arr) Array.isArray(x) ? out.push(...flatten(x)) : out.push(x);\n  return out;\n}",
+        "tests": [
+            {
+                "name": "shallow",
+                "body": "expect(flatten([1, [2, 3]])).toEqual([1, 2, 3]);"
+            },
+            {
+                "name": "deep",
+                "body": "expect(flatten([1, [2, [3, [4]]]])).toEqual([1, 2, 3, 4]);"
+            },
+            {
+                "name": "empty",
+                "body": "expect(flatten([])).toEqual([]);"
+            }
+        ],
+        "tags": [
+            "arrays",
+            "recursion"
+        ]
     },
-    "solution": "function flatten(arr) {\n  const out = [];\n  for (const x of arr) Array.isArray(x) ? out.push(...flatten(x)) : out.push(x);\n  return out;\n}",
-    "tests": [
-      { "name": "shallow", "body": "expect(flatten([1, [2, 3]])).toEqual([1, 2, 3]);" },
-      { "name": "deep", "body": "expect(flatten([1, [2, [3, [4]]]])).toEqual([1, 2, 3, 4]);" },
-      { "name": "empty", "body": "expect(flatten([])).toEqual([]);" }
-    ],
-    "tags": ["arrays", "recursion"]
-  },
-  {
-    "id": "js-throttle",
-    "topicSlug": "javascript",
-    "type": "worker",
-    "title": "Implement throttle",
-    "description": "Implement `throttle(fn, ms)` that ensures `fn` is called at most once every `ms` milliseconds. The first call should fire immediately.",
-    "difficulty": "hard",
-    "targetTimeSec": 360,
-    "starter": {
-      "solution.js": "function throttle(fn, ms) {\n  // TODO\n}\n"
+    {
+        "id": "js-throttle",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Implement throttle",
+        "description": "Implement `throttle(fn, ms)` that ensures `fn` is called at most once every `ms` milliseconds. The first call should fire immediately.",
+        "difficulty": "hard",
+        "targetTimeSec": 360,
+        "starter": {
+            "solution.js": "function throttle(fn, ms) {\n  // TODO\n}\n"
+        },
+        "solution": "function throttle(fn, ms) {\n  let last = 0;\n  return function (...args) {\n    const now = Date.now();\n    if (now - last >= ms) {\n      last = now;\n      fn.apply(this, args);\n    }\n  };\n}",
+        "tests": [
+            {
+                "name": "fires immediately",
+                "body": "let n = 0; const f = throttle(() => n++, 50); f(); expect(n).toBe(1);"
+            },
+            {
+                "name": "ignores within window",
+                "body": "let n = 0; const f = throttle(() => n++, 50); f(); f(); f(); expect(n).toBe(1);"
+            },
+            {
+                "name": "fires again after window",
+                "body": "let n = 0; const f = throttle(() => n++, 30); f(); await wait(50); f(); expect(n).toBe(2);"
+            }
+        ],
+        "tags": [
+            "functions",
+            "timing"
+        ]
     },
-    "solution": "function throttle(fn, ms) {\n  let last = 0;\n  return function (...args) {\n    const now = Date.now();\n    if (now - last >= ms) {\n      last = now;\n      fn.apply(this, args);\n    }\n  };\n}",
-    "tests": [
-      {
-        "name": "fires immediately",
-        "body": "let n = 0; const f = throttle(() => n++, 50); f(); expect(n).toBe(1);"
-      },
-      {
-        "name": "ignores within window",
-        "body": "let n = 0; const f = throttle(() => n++, 50); f(); f(); f(); expect(n).toBe(1);"
-      },
-      {
-        "name": "fires again after window",
-        "body": "let n = 0; const f = throttle(() => n++, 30); f(); await wait(50); f(); expect(n).toBe(2);"
-      }
-    ],
-    "tags": ["functions", "timing"]
-  },
-  {
-    "id": "css-grid-gallery",
-    "topicSlug": "css",
-    "type": "sandbox",
-    "title": "Build a responsive image grid",
-    "description": "Use CSS Grid to display the cards in a responsive layout: 1 column on mobile, 2 on tablet (≥640px), 3 on desktop (≥1024px). Use a 16px gap.",
-    "difficulty": "medium",
-    "targetTimeSec": 240,
-    "starter": {
-      "index.html": "<div class=\"grid\">\n  <div class=\"card\">1</div>\n  <div class=\"card\">2</div>\n  <div class=\"card\">3</div>\n  <div class=\"card\">4</div>\n  <div class=\"card\">5</div>\n  <div class=\"card\">6</div>\n</div>\n",
-      "styles.css": ".grid {\n  /* TODO: responsive grid */\n}\n.card {\n  background: #6366f1;\n  color: white;\n  padding: 32px;\n  border-radius: 12px;\n  text-align: center;\n}\n"
-    },
-    "tags": ["grid", "responsive"],
-    "tests": []
-  }
+    {
+        "id": "css-grid-gallery",
+        "topicSlug": "css",
+        "type": "sandbox",
+        "title": "Build a responsive image grid",
+        "description": "Use CSS Grid to display the cards in a responsive layout: 1 column on mobile, 2 on tablet (≥640px), 3 on desktop (≥1024px). Use a 16px gap.",
+        "difficulty": "medium",
+        "targetTimeSec": 240,
+        "starter": {
+            "index.html": "<div class=\"grid\">\n  <div class=\"card\">1</div>\n  <div class=\"card\">2</div>\n  <div class=\"card\">3</div>\n  <div class=\"card\">4</div>\n  <div class=\"card\">5</div>\n  <div class=\"card\">6</div>\n</div>\n",
+            "styles.css": ".grid {\n  /* TODO: responsive grid */\n}\n.card {\n  background: #6366f1;\n  color: white;\n  padding: 32px;\n  border-radius: 12px;\n  text-align: center;\n}\n"
+        },
+        "tags": [
+            "grid",
+            "responsive"
+        ],
+        "tests": []
+    }
 ]

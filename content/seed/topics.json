@@ -1,51 +1,51 @@
 [
-  {
-    "slug": "html",
-    "name": "HTML",
-    "description": "Semantic markup, accessibility and forms.",
-    "color": "orange",
-    "order": 1
-  },
-  {
-    "slug": "css",
-    "name": "CSS",
-    "description": "Layout, responsive design and animations.",
-    "color": "blue",
-    "order": 2
-  },
-  {
-    "slug": "javascript",
-    "name": "JavaScript",
-    "description": "Modern JS, async, closures and the event loop.",
-    "color": "yellow",
-    "order": 3
-  },
-  {
-    "slug": "react",
-    "name": "React",
-    "description": "Hooks, patterns and Server Components.",
-    "color": "cyan",
-    "order": 4
-  },
-  {
-    "slug": "nextjs",
-    "name": "Next.js",
-    "description": "App Router, Server Actions, caching.",
-    "color": "zinc",
-    "order": 5
-  },
-  {
-    "slug": "typescript",
-    "name": "TypeScript",
-    "description": "Generics, utility types and narrowing.",
-    "color": "indigo",
-    "order": 6
-  },
-  {
-    "slug": "node",
-    "name": "Node.js",
-    "description": "HTTP, streams, auth and error handling.",
-    "color": "emerald",
-    "order": 7
-  }
+    {
+        "slug": "html",
+        "name": "HTML",
+        "description": "Semantic markup, accessibility and forms.",
+        "color": "orange",
+        "order": 1
+    },
+    {
+        "slug": "css",
+        "name": "CSS",
+        "description": "Layout, responsive design and animations.",
+        "color": "blue",
+        "order": 2
+    },
+    {
+        "slug": "javascript",
+        "name": "JavaScript",
+        "description": "Modern JS, async, closures and the event loop.",
+        "color": "yellow",
+        "order": 3
+    },
+    {
+        "slug": "react",
+        "name": "React",
+        "description": "Hooks, patterns and Server Components.",
+        "color": "cyan",
+        "order": 4
+    },
+    {
+        "slug": "nextjs",
+        "name": "Next.js",
+        "description": "App Router, Server Actions, caching.",
+        "color": "zinc",
+        "order": 5
+    },
+    {
+        "slug": "typescript",
+        "name": "TypeScript",
+        "description": "Generics, utility types and narrowing.",
+        "color": "indigo",
+        "order": 6
+    },
+    {
+        "slug": "node",
+        "name": "Node.js",
+        "description": "HTTP, streams, auth and error handling.",
+        "color": "emerald",
+        "order": 7
+    }
 ]

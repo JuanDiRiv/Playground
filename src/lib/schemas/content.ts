@@ -40,11 +40,7 @@ export const QuestionSchema = z.object({
 });
 export type Question = z.infer<typeof QuestionSchema>;
 
-export const ExerciseTypeSchema = z.enum([
-  "sandbox",
-  "worker",
-  "conceptual",
-]);
+export const ExerciseTypeSchema = z.enum(["sandbox", "worker", "conceptual"]);
 export type ExerciseType = z.infer<typeof ExerciseTypeSchema>;
 
 export const TestCaseSchema = z.object({

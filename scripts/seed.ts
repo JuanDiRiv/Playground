@@ -29,9 +29,7 @@ async function readJson<T>(file: string): Promise<T> {
 async function main() {
   const db = getAdminDb();
 
-  const topics = TopicSchema.array().parse(
-    await readJson("topics.json"),
-  );
+  const topics = TopicSchema.array().parse(await readJson("topics.json"));
   const questions = QuestionSchema.array().parse(
     await readJson("questions.json"),
   );
