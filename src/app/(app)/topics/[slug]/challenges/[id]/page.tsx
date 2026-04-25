@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Timer } from "lucide-react";
 import { TopicSlugSchema } from "@/lib/schemas/content";
 import { getChallenge, getTopic } from "@/lib/content/queries";
+import { formatMinSec } from "@/lib/utils/format";
 import { ChallengeRunner } from "./challenge-runner";
 
 const DIFFICULTY_COLOR: Record<string, string> = {
@@ -10,12 +11,6 @@ const DIFFICULTY_COLOR: Record<string, string> = {
     medium: "bg-amber-500/15 text-amber-300",
     hard: "bg-red-500/15 text-red-300",
 };
-
-function formatMinSec(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-}
 
 export default async function ChallengePage({
     params,

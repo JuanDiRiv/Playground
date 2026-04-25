@@ -1,15 +1,24 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { Brain, Code2, Trophy, Zap } from "lucide-react";
+import { Award, Brain, Code2, Flame, Sparkles, Trophy, Zap } from "lucide-react";
 import { getSessionUser } from "@/lib/firebase/auth-server";
 import { signOut } from "@/lib/firebase/auth-actions";
 import { getUserStats } from "@/lib/content/progress";
+import { getUserGamification } from "@/lib/content/gamification";
+import {
+    BADGE_DESCRIPTION,
+    BADGE_LABEL,
+    type BadgeId,
+} from "@/lib/content/gamification-logic";
 
 export default async function ProfilePage() {
     const user = await getSessionUser();
     if (!user) redirect("/login");
 
-    const stats = await getUserStats(user.uid);
+    const [stats, gam] = await Promise.all([
+        getUserStats(user.uid),
+        getUserGamification(user.uid),
+    ]);
     const aiPct = Math.min(
         100,
         Math.round((stats.aiCallsToday / Math.max(1, stats.aiDailyLimit)) * 100),
@@ -39,6 +48,51 @@ export default async function ProfilePage() {
                     <div className="mt-1 text-xs text-fg-subtle">UID: {user.uid}</div>
                 </div>
             </div>
+
+            <section className="grid gap-3 sm:grid-cols-3">
+                <StatCard
+                    icon={<Flame className="h-4 w-4" />}
+                    label="Streak"
+                    value={gam.streak.current}
+                    sub={`longest ${gam.streak.longest} · last ${gam.streak.lastActiveDay ?? "never"}`}
+                />
+                <StatCard
+                    icon={<Sparkles className="h-4 w-4" />}
+                    label="XP"
+                    value={gam.xp}
+                    sub="Earn XP by completing items and keeping your streak"
+                />
+                <StatCard
+                    icon={<Award className="h-4 w-4" />}
+                    label="Badges"
+                    value={gam.badges.length}
+                    sub={gam.badges.length > 0 ? "Tap below for details" : "Earn your first badge"}
+                />
+            </section>
+
+            {gam.badges.length > 0 ? (
+                <section className="rounded-2xl border border-border bg-bg-elevated p-5">
+                    <h2 className="flex items-center gap-2 text-sm font-medium">
+                        <Award className="h-4 w-4 text-brand-300" /> Badges
+                    </h2>
+                    <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {gam.badges.map((id: BadgeId) => (
+                            <li
+                                key={id}
+                                className="flex items-start gap-3 rounded-lg border border-border bg-bg p-3"
+                            >
+                                <div className="grid h-9 w-9 place-items-center rounded-md bg-brand-500/15 text-brand-300">
+                                    <Award className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <div className="text-sm font-medium">{BADGE_LABEL[id]}</div>
+                                    <div className="text-xs text-fg-muted">{BADGE_DESCRIPTION[id]}</div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            ) : null}
 
             <section className="grid gap-3 sm:grid-cols-3">
                 <StatCard

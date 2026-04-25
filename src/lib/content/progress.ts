@@ -2,8 +2,11 @@ import "server-only";
 import { FieldValue } from "firebase-admin/firestore";
 import { getAdminDb } from "@/lib/firebase/admin";
 import type { QaFeedback } from "@/lib/ai/qa";
-import type { ConceptualFeedback } from "@/lib/ai/exercise";
 import type { TopicSlug } from "@/lib/schemas/content";
+import { isPassed, type ExerciseOutcome } from "@/lib/content/progress-logic";
+import { applyGamificationInTx } from "@/lib/content/gamification";
+
+export type { ExerciseOutcome };
 
 export type QaAttempt = {
   id: string;
@@ -46,6 +49,13 @@ export async function saveQaAttempt(input: {
     const isNewSolved =
       input.feedback.verdict === "correct" && previousBest < 5;
 
+    await applyGamificationInTx(
+      tx,
+      input.uid,
+      { type: "qa-solve", isFirstCompletion: isNewSolved },
+      new Date(createdAt),
+    );
+
     tx.set(attemptRef, attempt);
     tx.set(
       progressRef,
@@ -59,34 +69,12 @@ export async function saveQaAttempt(input: {
       },
       { merge: true },
     );
-
-    if (isNewSolved) {
-      tx.set(
-        userRef,
-        {
-          completedCount: FieldValue.increment(1),
-          updatedAt: createdAt,
-        },
-        { merge: true },
-      );
-    }
   });
 
   return attempt;
 }
 
-export type ExerciseOutcome =
-  | { kind: "worker"; passed: number; total: number }
-  | { kind: "conceptual"; feedback: ConceptualFeedback }
-  | { kind: "sandbox"; selfReported: boolean };
-
-function isPassed(outcome: ExerciseOutcome): boolean {
-  if (outcome.kind === "worker")
-    return outcome.total > 0 && outcome.passed === outcome.total;
-  if (outcome.kind === "conceptual")
-    return outcome.feedback.verdict === "correct";
-  return outcome.selfReported;
-}
+// ExerciseOutcome + isPassed live in `./progress-logic` (pure, unit-tested).
 
 /** Persists an exercise attempt and updates aggregate progress. */
 export async function saveExerciseAttempt(input: {
@@ -109,6 +97,14 @@ export async function saveExerciseAttempt(input: {
   await db.runTransaction(async (tx) => {
     const prev = await tx.get(progressRef);
     const wasPassed = (prev.data()?.passed as boolean | undefined) ?? false;
+    const isFirstCompletion = passed && !wasPassed;
+
+    await applyGamificationInTx(
+      tx,
+      input.uid,
+      { type: "exercise-pass", isFirstCompletion },
+      new Date(createdAt),
+    );
 
     tx.set(attemptRef, {
       id: attemptRef.id,
@@ -131,17 +127,6 @@ export async function saveExerciseAttempt(input: {
       },
       { merge: true },
     );
-
-    if (passed && !wasPassed) {
-      tx.set(
-        userRef,
-        {
-          completedCount: FieldValue.increment(1),
-          updatedAt: createdAt,
-        },
-        { merge: true },
-      );
-    }
   });
 }
 
@@ -174,6 +159,14 @@ export async function saveChallengeAttempt(input: {
     const nextBestSec = passed
       ? Math.min(previousBestSec ?? Number.POSITIVE_INFINITY, input.elapsedSec)
       : previousBestSec;
+    const isFirstCompletion = passed && !wasPassed;
+
+    await applyGamificationInTx(
+      tx,
+      input.uid,
+      { type: "challenge-pass", isFirstCompletion, onTime },
+      new Date(createdAt),
+    );
 
     tx.set(attemptRef, {
       id: attemptRef.id,
@@ -201,17 +194,6 @@ export async function saveChallengeAttempt(input: {
       },
       { merge: true },
     );
-
-    if (passed && !wasPassed) {
-      tx.set(
-        userRef,
-        {
-          completedCount: FieldValue.increment(1),
-          updatedAt: createdAt,
-        },
-        { merge: true },
-      );
-    }
   });
 }
 

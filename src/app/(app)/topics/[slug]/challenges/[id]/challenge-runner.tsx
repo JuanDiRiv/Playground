@@ -9,12 +9,7 @@ import {
     type WorkbenchSubmitResult,
 } from "@/components/workbench/workbench";
 import { submitChallengeAction } from "./actions";
-
-function formatMinSec(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = Math.max(0, sec) % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-}
+import { formatMinSec } from "@/lib/utils/format";
 
 export function ChallengeRunner({ challenge }: { challenge: Challenge }) {
     const [running, setRunning] = useState(false);
@@ -118,10 +113,10 @@ export function ChallengeRunner({ challenge }: { challenge: Challenge }) {
                     <div className="flex items-center gap-2">
                         <span
                             className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium tabular-nums ${overTime
-                                    ? "bg-red-500/15 text-red-300"
-                                    : running
-                                        ? "bg-brand-500/15 text-brand-300"
-                                        : "bg-bg-muted text-fg-muted"
+                                ? "bg-red-500/15 text-red-300"
+                                : running
+                                    ? "bg-brand-500/15 text-brand-300"
+                                    : "bg-bg-muted text-fg-muted"
                                 }`}
                         >
                             <Timer className="h-3 w-3" /> {formatMinSec(elapsedSec)}
@@ -150,8 +145,8 @@ export function ChallengeRunner({ challenge }: { challenge: Challenge }) {
             {stoppedInfo ? (
                 <div
                     className={`rounded-2xl border p-4 text-sm ${stoppedInfo.onTime
-                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                            : "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+                        : "border-amber-500/40 bg-amber-500/10 text-amber-200"
                         }`}
                 >
                     <div className="font-semibold">

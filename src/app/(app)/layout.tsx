@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/firebase/auth-server";
-import { AppHeader } from "@/components/app-header";
 
 /**
  * Authenticated layout for the protected app shell.
  * Performs server-side session verification with the Admin SDK.
+ * The top nav lives in the root layout (`AppNav`).
  */
 export default async function AppLayout({
     children,
@@ -16,10 +16,5 @@ export default async function AppLayout({
         redirect("/login");
     }
 
-    return (
-        <div className="min-h-dvh">
-            <AppHeader />
-            <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>
-        </div>
-    );
+    return <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>;
 }

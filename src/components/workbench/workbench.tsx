@@ -16,6 +16,7 @@ import type { Exercise } from "@/lib/schemas/content";
 import type { ConceptualFeedback } from "@/lib/ai/exercise";
 import { requestHintAction } from "@/lib/ai/hint-action";
 import type { HintLevel, HintResponse } from "@/lib/ai/hint";
+import { useToast } from "@/components/toast";
 
 const Monaco = dynamic(() => import("@monaco-editor/react"), {
     ssr: false,
@@ -106,6 +107,8 @@ export function Workbench({
     const [hintLevel, setHintLevel] = useState<HintLevel>(1);
     const [loadingHint, startHint] = useTransition();
 
+    const toast = useToast();
+
     const workerRef = useRef<Worker | null>(null);
 
     useEffect(() => {
@@ -114,6 +117,27 @@ export function Workbench({
             workerRef.current = null;
         };
     }, []);
+
+    // ---- Keyboard shortcuts ----
+    // Ctrl/Cmd+Enter -> run tests (worker) | Ctrl/Cmd+S -> submit
+    useEffect(() => {
+        function onKey(e: KeyboardEvent) {
+            const mod = e.metaKey || e.ctrlKey;
+            if (!mod) return;
+            if (e.key === "Enter" && item.type === "worker") {
+                e.preventDefault();
+                runTestsRef.current?.();
+            } else if (e.key.toLowerCase() === "s") {
+                e.preventDefault();
+                submitRef.current?.();
+            }
+        }
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [item.type]);
+
+    const runTestsRef = useRef<() => void>(undefined);
+    const submitRef = useRef<() => void>(undefined);
 
     function updateFile(name: string, value: string) {
         setFiles((prev) => ({ ...prev, [name]: value }));
@@ -223,12 +247,22 @@ export function Workbench({
             const res = await onSubmit(payload);
             if (!res.ok) {
                 setSubmitError(res.error ?? "Submission failed");
+                toast.error("Submission failed", res.error);
                 return;
             }
             if (res.feedback) setFeedback(res.feedback);
-            if (res.info) setSubmitInfo(res.info);
+            if (res.info) {
+                setSubmitInfo(res.info);
+                toast.success("Saved", res.info);
+            } else {
+                toast.success("Saved");
+            }
         });
     }
+
+    // Bind shortcut refs to current functions
+    runTestsRef.current = runTests;
+    submitRef.current = submit;
 
     // ---- Hint ----
     function requestHint(level: HintLevel) {
@@ -260,8 +294,8 @@ export function Workbench({
                                 type="button"
                                 onClick={() => setActiveFile(name)}
                                 className={`px-3 py-2 text-xs font-medium transition ${activeFile === name
-                                        ? "border-b-2 border-brand-500 text-fg"
-                                        : "text-fg-muted hover:text-fg"
+                                    ? "border-b-2 border-brand-500 text-fg"
+                                    : "text-fg-muted hover:text-fg"
                                     }`}
                             >
                                 {name}
@@ -409,8 +443,8 @@ function HintBar({
                             onClick={() => onRequest(lvl)}
                             disabled={loading}
                             className={`rounded-md border px-2.5 py-1 text-xs font-medium transition disabled:opacity-50 ${hint && hint.level === lvl
-                                    ? "border-amber-400/60 bg-amber-500/10 text-amber-200"
-                                    : "border-border text-fg-muted hover:text-fg"
+                                ? "border-amber-400/60 bg-amber-500/10 text-amber-200"
+                                : "border-border text-fg-muted hover:text-fg"
                                 }`}
                         >
                             {loading && level === lvl ? (
@@ -480,8 +514,8 @@ function WorkerOutput({
                     <li
                         key={i}
                         className={`rounded-lg border px-3 py-2 text-sm ${r.ok
-                                ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-200"
-                                : "border-red-500/30 bg-red-500/5 text-red-200"
+                            ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-200"
+                            : "border-red-500/30 bg-red-500/5 text-red-200"
                             }`}
                     >
                         <div className="flex items-center gap-2">
