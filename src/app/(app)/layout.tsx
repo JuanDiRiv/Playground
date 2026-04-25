@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/firebase/auth-server";
+import { AppHeader } from "@/components/app-header";
 
 /**
  * Authenticated layout for the protected app shell.
@@ -15,5 +16,10 @@ export default async function AppLayout({
         redirect("/login");
     }
 
-    return <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>;
+    return (
+        <div className="min-h-dvh">
+            <AppHeader />
+            <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>
+        </div>
+    );
 }

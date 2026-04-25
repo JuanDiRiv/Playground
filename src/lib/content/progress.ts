@@ -214,3 +214,73 @@ export async function saveChallengeAttempt(input: {
     }
   });
 }
+
+export type UserStats = {
+  qaSolved: number;
+  qaAttempts: number;
+  exercisesPassed: number;
+  exerciseAttempts: number;
+  challengesPassed: number;
+  challengesOnTime: number;
+  challengeAttempts: number;
+  aiCallsToday: number;
+  aiDailyLimit: number;
+};
+
+/**
+ * Aggregates user progress across Q&A, exercises and challenges.
+ * Reads only progress docs (not full attempt history) for efficiency.
+ */
+export async function getUserStats(uid: string): Promise<UserStats> {
+  const db = getAdminDb();
+  const userRef = db.collection("users").doc(uid);
+  const todayKey = new Date().toISOString().slice(0, 10);
+
+  const [qaSnap, exSnap, chSnap, usageSnap] = await Promise.all([
+    userRef.collection("qa_progress").get(),
+    userRef.collection("exercise_progress").get(),
+    userRef.collection("challenge_progress").get(),
+    userRef.collection("ai_usage").doc(todayKey).get(),
+  ]);
+
+  let qaSolved = 0;
+  let qaAttempts = 0;
+  for (const d of qaSnap.docs) {
+    const data = d.data();
+    if ((data.bestScore as number | undefined) === 5) qaSolved += 1;
+    qaAttempts += (data.attempts as number | undefined) ?? 0;
+  }
+
+  let exercisesPassed = 0;
+  let exerciseAttempts = 0;
+  for (const d of exSnap.docs) {
+    const data = d.data();
+    if (data.passed === true) exercisesPassed += 1;
+    exerciseAttempts += (data.attempts as number | undefined) ?? 0;
+  }
+
+  let challengesPassed = 0;
+  let challengesOnTime = 0;
+  let challengeAttempts = 0;
+  for (const d of chSnap.docs) {
+    const data = d.data();
+    if (data.passed === true) challengesPassed += 1;
+    if (data.onTime === true) challengesOnTime += 1;
+    challengeAttempts += (data.attempts as number | undefined) ?? 0;
+  }
+
+  return {
+    qaSolved,
+    qaAttempts,
+    exercisesPassed,
+    exerciseAttempts,
+    challengesPassed,
+    challengesOnTime,
+    challengeAttempts,
+    aiCallsToday: (usageSnap.data()?.count as number | undefined) ?? 0,
+    aiDailyLimit: Number.parseInt(
+      process.env.AI_DAILY_LIMIT_PER_USER ?? "50",
+      10,
+    ),
+  };
+}
