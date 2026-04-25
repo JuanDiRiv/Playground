@@ -144,3 +144,73 @@ export async function saveExerciseAttempt(input: {
     }
   });
 }
+
+/** Persists a challenge attempt with timing info and updates aggregate progress. */
+export async function saveChallengeAttempt(input: {
+  uid: string;
+  topicSlug: TopicSlug;
+  challengeId: string;
+  files: Record<string, string>;
+  outcome: ExerciseOutcome;
+  elapsedSec: number;
+  targetTimeSec: number;
+}): Promise<void> {
+  const db = getAdminDb();
+  const userRef = db.collection("users").doc(input.uid);
+  const attemptRef = userRef.collection("challenge_attempts").doc();
+  const progressRef = userRef
+    .collection("challenge_progress")
+    .doc(input.challengeId);
+
+  const createdAt = new Date().toISOString();
+  const passed = isPassed(input.outcome);
+  const onTime = passed && input.elapsedSec <= input.targetTimeSec;
+
+  await db.runTransaction(async (tx) => {
+    const prev = await tx.get(progressRef);
+    const wasPassed = (prev.data()?.passed as boolean | undefined) ?? false;
+    const wasOnTime = (prev.data()?.onTime as boolean | undefined) ?? false;
+    const previousBestSec = prev.data()?.bestTimeSec as number | undefined;
+    const nextBestSec = passed
+      ? Math.min(previousBestSec ?? Number.POSITIVE_INFINITY, input.elapsedSec)
+      : previousBestSec;
+
+    tx.set(attemptRef, {
+      id: attemptRef.id,
+      challengeId: input.challengeId,
+      topicSlug: input.topicSlug,
+      files: input.files,
+      outcome: input.outcome,
+      elapsedSec: input.elapsedSec,
+      targetTimeSec: input.targetTimeSec,
+      passed,
+      onTime,
+      createdAt,
+    });
+
+    tx.set(
+      progressRef,
+      {
+        challengeId: input.challengeId,
+        topicSlug: input.topicSlug,
+        passed: wasPassed || passed,
+        onTime: wasOnTime || onTime,
+        bestTimeSec: nextBestSec ?? null,
+        attempts: FieldValue.increment(1),
+        updatedAt: createdAt,
+      },
+      { merge: true },
+    );
+
+    if (passed && !wasPassed) {
+      tx.set(
+        userRef,
+        {
+          completedCount: FieldValue.increment(1),
+          updatedAt: createdAt,
+        },
+        { merge: true },
+      );
+    }
+  });
+}

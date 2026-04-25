@@ -77,3 +77,17 @@ export async function listChallenges(slug: TopicSlug): Promise<Challenge[]> {
     .get();
   return snap.docs.map((doc) => ChallengeSchema.parse(doc.data()));
 }
+
+export async function getChallenge(
+  slug: TopicSlug,
+  id: string,
+): Promise<Challenge | null> {
+  const doc = await getAdminDb()
+    .collection("topics")
+    .doc(slug)
+    .collection("challenges")
+    .doc(id)
+    .get();
+  if (!doc.exists) return null;
+  return ChallengeSchema.parse(doc.data());
+}
