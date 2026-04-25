@@ -101,7 +101,7 @@ export default async function TopicPage({
             ) : null}
             {activeTab === "exercises" ? (
                 <ItemList
-                    basePath="/exercises"
+                    basePath={`/topics/${topicSlug}/exercises`}
                     empty="No exercises yet."
                     items={exercises.map((e) => ({
                         id: e.id,
@@ -113,7 +113,7 @@ export default async function TopicPage({
             ) : null}
             {activeTab === "challenges" ? (
                 <ItemList
-                    basePath="/challenges"
+                    basePath={`/topics/${topicSlug}/challenges`}
                     empty="No challenges yet."
                     items={challenges.map((c) => ({
                         id: c.id,
