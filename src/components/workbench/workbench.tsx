@@ -9,6 +9,7 @@ import {
     Play,
     RotateCcw,
     Send,
+    Sparkles,
     XCircle,
 } from "lucide-react";
 import { transform } from "sucrase";
@@ -107,6 +108,15 @@ export function Workbench({
     const [hintLevel, setHintLevel] = useState<HintLevel>(1);
     const [loadingHint, startHint] = useTransition();
 
+    // Which pane is visible on mobile (lg+ shows both side-by-side).
+    const [mobilePane, setMobilePane] = useState<"editor" | "output">("editor");
+
+    // ---- Explain code (F3) ----
+    const [explanation, setExplanation] = useState<string>("");
+    const [explaining, setExplaining] = useState(false);
+    const [explainError, setExplainError] = useState<string | null>(null);
+    const [showExplain, setShowExplain] = useState(false);
+
     const toast = useToast();
 
     const workerRef = useRef<Worker | null>(null);
@@ -155,6 +165,44 @@ export function Workbench({
         setHintLevel(1);
     }
 
+    async function explainCode() {
+        const code = files[activeFile] ?? "";
+        if (!code.trim()) {
+            setExplainError("File is empty.");
+            setShowExplain(true);
+            return;
+        }
+        setExplainError(null);
+        setExplanation("");
+        setExplaining(true);
+        setShowExplain(true);
+        try {
+            const res = await fetch("/api/ai/stream", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    mode: "code-explain",
+                    prompt: `File: ${activeFile}\nExercise: ${item.title}\n\n\`\`\`\n${code}\n\`\`\``,
+                }),
+            });
+            if (!res.ok || !res.body) {
+                const data = await res.json().catch(() => null);
+                throw new Error(data?.error ?? `Stream failed (${res.status})`);
+            }
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                setExplanation((prev) => prev + decoder.decode(value, { stream: true }));
+            }
+        } catch (e) {
+            setExplainError(e instanceof Error ? e.message : "Stream failed");
+        } finally {
+            setExplaining(false);
+        }
+    }
+
     // ---- Sandbox preview ----
     const sandboxSrcDoc = useMemo(() => {
         if (item.type !== "sandbox") return "";
@@ -169,6 +217,7 @@ export function Workbench({
         setRunError(null);
         setResults(null);
         setRunning(true);
+        setMobilePane("output");
 
         let code = "";
         try {
@@ -222,6 +271,7 @@ export function Workbench({
         setSubmitError(null);
         setSubmitInfo(null);
         setFeedback(null);
+        setMobilePane("output");
 
         startSubmit(async () => {
             let payload: WorkbenchSubmit;
@@ -284,16 +334,56 @@ export function Workbench({
 
     return (
         <div className="space-y-4">
+            {/* Mobile pane toggle (hidden on lg+) */}
+            <div
+                className="flex gap-1 rounded-xl border border-border bg-bg-elevated p-1 lg:hidden"
+                role="tablist"
+                aria-label="Workbench panes"
+            >
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected={mobilePane === "editor"}
+                    onClick={() => setMobilePane("editor")}
+                    className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${mobilePane === "editor"
+                        ? "bg-bg text-fg shadow"
+                        : "text-fg-muted hover:text-fg"
+                        }`}
+                >
+                    Editor
+                </button>
+                <button
+                    type="button"
+                    role="tab"
+                    aria-selected={mobilePane === "output"}
+                    onClick={() => setMobilePane("output")}
+                    className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${mobilePane === "output"
+                        ? "bg-bg text-fg shadow"
+                        : "text-fg-muted hover:text-fg"
+                        }`}
+                >
+                    {item.type === "sandbox" ? "Preview" : item.type === "worker" ? "Tests" : "Review"}
+                </button>
+            </div>
+
             <div className="grid gap-4 lg:grid-cols-2">
                 {/* Editor */}
-                <div className="flex h-[60vh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-bg-elevated">
-                    <div className="flex items-center gap-1 border-b border-border bg-bg px-2">
+                <div
+                    className={`flex h-[60vh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-bg-elevated ${mobilePane === "editor" ? "" : "hidden lg:flex"}`}
+                >
+                    <div
+                        className="flex items-center gap-1 border-b border-border bg-bg px-2"
+                        role="tablist"
+                        aria-label="Open files"
+                    >
                         {filenames.map((name) => (
                             <button
                                 key={name}
                                 type="button"
+                                role="tab"
+                                aria-selected={activeFile === name}
                                 onClick={() => setActiveFile(name)}
-                                className={`px-3 py-2 text-xs font-medium transition ${activeFile === name
+                                className={`px-3 py-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${activeFile === name
                                     ? "border-b-2 border-brand-500 text-fg"
                                     : "text-fg-muted hover:text-fg"
                                     }`}
@@ -303,6 +393,20 @@ export function Workbench({
                         ))}
                         <div className="ml-auto flex items-center gap-1">
                             {headerExtra}
+                            <button
+                                type="button"
+                                onClick={explainCode}
+                                disabled={explaining}
+                                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-fg-muted hover:text-fg disabled:opacity-50"
+                                title="Explain this code with AI"
+                            >
+                                {explaining ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                    <Sparkles className="h-3.5 w-3.5" />
+                                )}
+                                Explain
+                            </button>
                             <button
                                 type="button"
                                 onClick={reset}
@@ -331,7 +435,12 @@ export function Workbench({
                 </div>
 
                 {/* Output */}
-                <div className="flex h-[60vh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-bg-elevated">
+                <div
+                    className={`flex h-[60vh] min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border bg-bg-elevated ${mobilePane === "output" ? "" : "hidden lg:flex"}`}
+                    role="region"
+                    aria-label={item.type === "sandbox" ? "Live preview" : item.type === "worker" ? "Test results" : "AI review"}
+                    aria-live="polite"
+                >
                     <div className="flex items-center gap-2 border-b border-border bg-bg px-3 py-2">
                         <span className="text-xs font-medium uppercase tracking-wide text-fg-muted">
                             {item.type === "sandbox"
@@ -410,6 +519,43 @@ export function Workbench({
                 loading={loadingHint}
                 onRequest={requestHint}
             />
+
+            {/* Explain code panel (F3) */}
+            {showExplain ? (
+                <div
+                    className="rounded-2xl border border-border bg-bg-elevated p-4"
+                    role="region"
+                    aria-label="AI code explanation"
+                    aria-live="polite"
+                >
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm font-medium text-fg">
+                            <Sparkles className="h-4 w-4 text-brand-400" />
+                            Code explanation · {activeFile}
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowExplain(false)}
+                            className="rounded-md px-2 py-1 text-xs text-fg-muted hover:text-fg"
+                        >
+                            Close
+                        </button>
+                    </div>
+                    {explainError ? (
+                        <p className="mt-3 text-sm text-red-300">{explainError}</p>
+                    ) : null}
+                    {explanation ? (
+                        <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-fg">
+                            {explanation}
+                            {explaining ? (
+                                <span className="ml-0.5 animate-pulse">▍</span>
+                            ) : null}
+                        </p>
+                    ) : explaining ? (
+                        <p className="mt-3 text-sm text-fg-muted">Streaming…</p>
+                    ) : null}
+                </div>
+            ) : null}
         </div>
     );
 }

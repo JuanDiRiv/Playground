@@ -22,10 +22,98 @@
         ]
     },
     {
+        "id": "html-aria-live",
+        "topicSlug": "html",
+        "prompt": "What does aria-live do and what are the differences between 'polite' and 'assertive'?",
+        "modelAnswer": "aria-live marks a region whose dynamic updates should be announced by screen readers. 'polite' waits until the user is idle (default for non-urgent updates). 'assertive' interrupts the current speech (use sparingly: errors, time-critical alerts). Pair with aria-atomic to control whether the entire region or just the change is announced.",
+        "difficulty": "medium",
+        "tags": [
+            "accessibility",
+            "aria"
+        ]
+    },
+    {
+        "id": "html-img-alt",
+        "topicSlug": "html",
+        "prompt": "When should the alt attribute of an <img> be empty (alt=\"\") versus descriptive? Give an example for each.",
+        "modelAnswer": "Use alt=\"\" for purely decorative images so screen readers skip them. Use descriptive alt for images conveying information (e.g. alt=\"Bar chart: 2024 revenue grew 23%\"). Never duplicate adjacent text. Omitting alt entirely is wrong — screen readers may read the file URL.",
+        "difficulty": "easy",
+        "tags": [
+            "accessibility",
+            "images"
+        ]
+    },
+    {
+        "id": "html-meta-viewport",
+        "topicSlug": "html",
+        "prompt": "What does <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> do, and what breaks if you omit it?",
+        "modelAnswer": "It tells mobile browsers to use the device's actual width as the layout viewport and render with no initial zoom. Omit it and mobile browsers render the page as if the screen were desktop-wide and zoom out, breaking responsive media queries and producing tiny, unreadable text.",
+        "difficulty": "medium",
+        "tags": [
+            "responsive",
+            "mobile"
+        ]
+    },
+    {
+        "id": "html-button-vs-anchor",
+        "topicSlug": "html",
+        "prompt": "When should you use <button> versus <a>? Why does it matter for accessibility?",
+        "modelAnswer": "Use <a href> for navigation (changes URL) and <button> for actions (submits a form, toggles UI, runs JS). Screen readers and keyboards treat them differently: links use Enter and announce 'link', buttons use Enter/Space and announce 'button'. Misusing <a> with onClick breaks middle-click and confuses assistive tech.",
+        "difficulty": "easy",
+        "tags": [
+            "accessibility",
+            "semantics"
+        ]
+    },
+    {
+        "id": "html-input-types",
+        "topicSlug": "html",
+        "prompt": "Name three modern <input type> values beyond text/password and explain the UX wins.",
+        "modelAnswer": "type=email triggers an email keyboard on mobile; type=tel shows a numeric keypad; type=date opens a native date picker; type=number gives a numeric keyboard and spinner; type=search adds a clear button. They also emit better validation events and improve form autofill.",
+        "difficulty": "easy",
+        "tags": [
+            "forms",
+            "ux"
+        ]
+    },
+    {
+        "id": "html-progressive-enhancement",
+        "topicSlug": "html",
+        "prompt": "Explain progressive enhancement. Why is it relevant in 2026 with frameworks like Next.js?",
+        "modelAnswer": "Progressive enhancement layers behavior on top of working HTML. It still matters because (1) JS can fail to load, (2) Server Components and Server Actions in Next.js submit real forms that work pre-hydration, (3) it improves Core Web Vitals and accessibility, (4) crawlers and machine clients only see HTML.",
+        "difficulty": "medium",
+        "tags": [
+            "architecture",
+            "resilience"
+        ]
+    },
+    {
+        "id": "html-shadow-dom",
+        "topicSlug": "html",
+        "prompt": "What is the Shadow DOM and what problem does it solve compared to a plain div tree?",
+        "modelAnswer": "Shadow DOM attaches an encapsulated subtree to a host element with its own scoped CSS and event retargeting. It solves style and ID collisions and is the foundation of Web Components. Querying across the boundary requires explicit slots, and global styles don't pierce in (use CSS custom properties or ::part).",
+        "difficulty": "hard",
+        "tags": [
+            "web-components",
+            "architecture"
+        ]
+    },
+    {
+        "id": "html-defer-async",
+        "topicSlug": "html",
+        "prompt": "Compare <script>, <script async> and <script defer>. When would you pick each?",
+        "modelAnswer": "Plain <script>: blocks HTML parsing, executes in order. <script async>: downloads in parallel, executes ASAP, NOT in order — best for independent third-party scripts. <script defer>: downloads in parallel, executes after HTML parsing in document order — best for app scripts. Modules (<script type=module>) are deferred by default.",
+        "difficulty": "medium",
+        "tags": [
+            "performance",
+            "loading"
+        ]
+    },
+    {
         "id": "css-flex-vs-grid",
         "topicSlug": "css",
         "prompt": "When would you reach for Flexbox versus CSS Grid? Give one example for each.",
-        "modelAnswer": "Flexbox is one-dimensional (row OR column) — ideal for nav bars, button groups, distributing items along a single axis. Grid is two-dimensional (rows AND columns) — ideal for page layouts, dashboards, image galleries. They compose well: Grid for the macro layout, Flex for components inside cells.",
+        "modelAnswer": "Flexbox is one-dimensional (row OR column) — ideal for nav bars, button groups. Grid is two-dimensional (rows AND columns) — ideal for page layouts, dashboards, image galleries. They compose well: Grid for the macro layout, Flex for components inside cells.",
         "difficulty": "medium",
         "tags": [
             "layout",
@@ -37,7 +125,7 @@
         "id": "css-specificity",
         "topicSlug": "css",
         "prompt": "Explain CSS specificity. Order from highest to lowest: !important, inline style, ID selector, class selector, element selector.",
-        "modelAnswer": "Order (highest to lowest): 1) !important (overrides everything except later !important), 2) inline style (1,0,0,0), 3) ID selector (0,1,0,0), 4) class/attribute/pseudo-class (0,0,1,0), 5) element/pseudo-element (0,0,0,1). Avoid !important; prefer increasing specificity intentionally or using cascade layers.",
+        "modelAnswer": "Order: 1) !important, 2) inline style (1,0,0,0), 3) ID selector (0,1,0,0), 4) class/attribute/pseudo-class (0,0,1,0), 5) element/pseudo-element (0,0,0,1). Avoid !important; prefer increasing specificity intentionally or using cascade layers.",
         "difficulty": "medium",
         "tags": [
             "specificity",
@@ -45,10 +133,95 @@
         ]
     },
     {
+        "id": "css-box-model",
+        "topicSlug": "css",
+        "prompt": "Explain the CSS box model and what box-sizing: border-box changes.",
+        "modelAnswer": "Every element is content + padding + border + margin. With content-box, width sizes only the content, so padding/border increase the visible width. With border-box, width includes content + padding + border (margin is still outside). border-box makes layouts predictable.",
+        "difficulty": "easy",
+        "tags": [
+            "fundamentals",
+            "layout"
+        ]
+    },
+    {
+        "id": "css-position-absolute",
+        "topicSlug": "css",
+        "prompt": "What does position: absolute resolve against, and how does it interact with transform on an ancestor?",
+        "modelAnswer": "An absolutely positioned element offsets relative to its nearest positioned ancestor. transform, filter, perspective, will-change and contain on an ancestor also create a new containing block, often unintentionally trapping absolute children.",
+        "difficulty": "hard",
+        "tags": [
+            "positioning"
+        ]
+    },
+    {
+        "id": "css-stacking-context",
+        "topicSlug": "css",
+        "prompt": "What creates a new stacking context, and why does z-index sometimes not work?",
+        "modelAnswer": "Triggers: position with z-index, opacity < 1, transform, filter, will-change, isolation: isolate. z-index 'fails' when an element competes with another in a different stacking context: the parent's context wins regardless of the child's z-index.",
+        "difficulty": "hard",
+        "tags": [
+            "z-index",
+            "stacking"
+        ]
+    },
+    {
+        "id": "css-margin-collapse",
+        "topicSlug": "css",
+        "prompt": "What is margin collapsing and how do you prevent it?",
+        "modelAnswer": "Adjacent vertical margins of block elements collapse into the larger of the two. Prevent it with: padding, border, display: flex/grid on the parent, overflow: hidden/auto, or display: flow-root.",
+        "difficulty": "medium",
+        "tags": [
+            "layout",
+            "margins"
+        ]
+    },
+    {
+        "id": "css-em-vs-rem",
+        "topicSlug": "css",
+        "prompt": "Compare em, rem, %, vw and px. When would you use each?",
+        "modelAnswer": "px: absolute. rem: relative to root font-size — best for typography and spacing. em: relative to element's own font-size — useful for component padding. %: relative to parent. vw/vh: relative to viewport. Best practice: rem for layout, em for component padding, clamp() for fluid type.",
+        "difficulty": "medium",
+        "tags": [
+            "units",
+            "responsive"
+        ]
+    },
+    {
+        "id": "css-pseudo-classes",
+        "topicSlug": "css",
+        "prompt": "Explain :is(), :where() and :has(). Give one practical example.",
+        "modelAnswer": ":is(a, b, c) matches if any selector matches and uses highest specificity inside. :where(...) is identical but always 0 specificity. :has(...) matches a parent containing the descendant. Example: article:has(img) { padding-block: 2rem; }.",
+        "difficulty": "hard",
+        "tags": [
+            "selectors"
+        ]
+    },
+    {
+        "id": "css-container-queries",
+        "topicSlug": "css",
+        "prompt": "What are container queries and how do they differ from media queries?",
+        "modelAnswer": "Media queries respond to the viewport. Container queries respond to a containing element's size. Declare with container-type: inline-size and use @container (min-width: 30rem). Components become self-aware regardless of page layout.",
+        "difficulty": "medium",
+        "tags": [
+            "responsive",
+            "components"
+        ]
+    },
+    {
+        "id": "css-transitions-vs-animations",
+        "topicSlug": "css",
+        "prompt": "When would you use a CSS transition versus a @keyframes animation?",
+        "modelAnswer": "Transitions interpolate between two states (hover, class toggle). Animations (@keyframes) define multi-step or autonomous motion (loaders, marquees). For UI feedback prefer transitions; for ambient motion prefer animations.",
+        "difficulty": "easy",
+        "tags": [
+            "animation"
+        ]
+    },
+    {
         "id": "js-var-let-const",
         "topicSlug": "javascript",
-        "prompt": "Compare var, let and const in terms of scope, hoisting and reassignment. Give one example where you'd choose each.",
-        "modelAnswer": "var: function-scoped, hoisted as undefined, can be redeclared and reassigned. let: block-scoped, hoisted but in TDZ until declaration, reassignable, no redeclaration in the same scope. const: block-scoped, TDZ, no reassignment (but objects can mutate). Modern code: const by default, let when reassignment is needed, avoid var.",
+        "prompt": "Compare var, let and const in terms of scope, hoisting and reassignment.",
+        "modelAnswer": "var: function-scoped, hoisted as undefined. let: block-scoped, hoisted but in TDZ, reassignable. const: block-scoped, TDZ, no reassignment (objects can mutate). Modern code: const by default, let when reassignment is needed, avoid var.",
         "difficulty": "easy",
         "tags": [
             "fundamentals",
@@ -59,7 +232,7 @@
         "id": "js-event-loop",
         "topicSlug": "javascript",
         "prompt": "Walk through what happens when you run: console.log(1); setTimeout(() => console.log(2), 0); Promise.resolve().then(() => console.log(3)); console.log(4);",
-        "modelAnswer": "Output: 1, 4, 3, 2. The synchronous code runs first (1 then 4). Then the microtask queue (Promise callbacks) drains before the macrotask queue (setTimeout). So 3 (microtask) prints before 2 (macrotask), even with delay 0.",
+        "modelAnswer": "Output: 1, 4, 3, 2. Sync code runs first (1, 4). Then microtasks (Promise) drain before macrotasks (setTimeout), so 3 prints before 2.",
         "difficulty": "medium",
         "tags": [
             "async",
@@ -70,7 +243,7 @@
         "id": "js-closures",
         "topicSlug": "javascript",
         "prompt": "What is a closure in JavaScript? Give a practical use case beyond counters.",
-        "modelAnswer": "A closure is a function that retains access to variables from its lexical scope even after that scope has exited. Practical uses: data privacy (module pattern with private state), partial application/currying, memoization caches, factory functions producing pre-configured handlers, debounce/throttle implementations.",
+        "modelAnswer": "A closure retains access to variables from its lexical scope after that scope has exited. Uses: data privacy (module pattern), partial application/currying, memoization, factory functions, debounce/throttle.",
         "difficulty": "medium",
         "tags": [
             "fundamentals",
@@ -78,10 +251,85 @@
         ]
     },
     {
+        "id": "js-this-binding",
+        "topicSlug": "javascript",
+        "prompt": "Explain how `this` is determined for: a regular function call, a method call, an arrow function, and a function called with .bind(obj).",
+        "modelAnswer": "Regular call: undefined in strict mode, global otherwise. Method (obj.fn()): `this` is obj. Arrow: lexical, ignores how it's called. .bind(obj): permanently sets `this` to obj. .call/.apply invoke with `this = obj`.",
+        "difficulty": "medium",
+        "tags": [
+            "this",
+            "fundamentals"
+        ]
+    },
+    {
+        "id": "js-equality",
+        "topicSlug": "javascript",
+        "prompt": "When does == differ from ===? Give a surprising example.",
+        "modelAnswer": "== coerces; === doesn't. [] == false → true (both coerce to 0). null == undefined → true but null === undefined → false. '0' == false → true. Prefer === unless using x == null to match null/undefined.",
+        "difficulty": "easy",
+        "tags": [
+            "equality",
+            "coercion"
+        ]
+    },
+    {
+        "id": "js-promise-vs-async",
+        "topicSlug": "javascript",
+        "prompt": "How does an async/await function relate to a Promise under the hood?",
+        "modelAnswer": "An async function always returns a Promise. `return x` resolves with x; `throw e` rejects. `await p` pauses, schedules continuation as a microtask once p settles. Multiple awaits run sequentially; for parallel work start promises first then await Promise.all.",
+        "difficulty": "medium",
+        "tags": [
+            "async",
+            "promises"
+        ]
+    },
+    {
+        "id": "js-prototype-chain",
+        "topicSlug": "javascript",
+        "prompt": "Explain the prototype chain. What's the difference between __proto__ and prototype?",
+        "modelAnswer": "Each object has [[Prototype]] (accessible via Object.getPrototypeOf) checked when a property isn't found locally. Constructor.prototype is the object that becomes [[Prototype]] of instances created with `new`. So Array.prototype is what arr.__proto__ points to.",
+        "difficulty": "hard",
+        "tags": [
+            "prototypes",
+            "inheritance"
+        ]
+    },
+    {
+        "id": "js-map-vs-object",
+        "topicSlug": "javascript",
+        "prompt": "When should you use a Map instead of a plain object?",
+        "modelAnswer": "Use Map when keys aren't strings/symbols, you need predictable insertion order, you frequently add/remove entries, you need .size, or to avoid prototype-pollution risks. Use objects for fixed-shape records.",
+        "difficulty": "medium",
+        "tags": [
+            "data-structures"
+        ]
+    },
+    {
+        "id": "js-modules",
+        "topicSlug": "javascript",
+        "prompt": "Compare ES Modules with CommonJS.",
+        "modelAnswer": "ESM: static imports, tree-shaking, top-level await, live bindings, strict by default. CJS: dynamic require, value snapshots, awkward interop. Modern Node and bundlers prefer ESM.",
+        "difficulty": "medium",
+        "tags": [
+            "modules"
+        ]
+    },
+    {
+        "id": "js-iterators-generators",
+        "topicSlug": "javascript",
+        "prompt": "What is a generator function and how does it relate to iterators?",
+        "modelAnswer": "A generator (function*) returns an iterator that lazily produces values via yield. Calling .next() runs until the next yield. Generators implement the iterable protocol so they work in for...of, spread, destructuring. Useful for lazy/infinite sequences.",
+        "difficulty": "hard",
+        "tags": [
+            "iterators",
+            "generators"
+        ]
+    },
+    {
         "id": "react-useeffect-deps",
         "topicSlug": "react",
         "prompt": "Explain the dependency array of useEffect. What's the difference between [], [value] and omitting it?",
-        "modelAnswer": "Empty [] runs once after mount (and cleanup on unmount). [value] runs on mount and whenever `value` changes (referential equality). Omitting runs after every render — usually a bug. Effects should list every reactive value they read; missing deps cause stale closures, extra deps cause unnecessary work.",
+        "modelAnswer": "[] runs once after mount (cleanup on unmount). [value] runs on mount and when value changes (referential equality). Omitting runs after every render — usually a bug. List every reactive value the effect reads.",
         "difficulty": "medium",
         "tags": [
             "hooks"
@@ -91,7 +339,7 @@
         "id": "react-server-components",
         "topicSlug": "react",
         "prompt": "What are React Server Components and how do they differ from SSR?",
-        "modelAnswer": "RSCs render only on the server and never ship JS to the client. They can access server-only resources (DB, secrets) directly. SSR renders the same Client Component tree on the server for the initial HTML, then hydrates the same JS on the client. RSC reduces bundle size and lets you compose Server + Client components in one tree.",
+        "modelAnswer": "RSCs render only on the server and never ship JS to the client. SSR renders Client Components on the server then hydrates the same JS. RSC reduces bundle size and lets you compose Server + Client components in one tree.",
         "difficulty": "hard",
         "tags": [
             "rsc",
@@ -99,10 +347,97 @@
         ]
     },
     {
+        "id": "react-keys",
+        "topicSlug": "react",
+        "prompt": "Why does React need keys when rendering lists, and why is using the array index often a bug?",
+        "modelAnswer": "Keys let React match elements between renders to preserve state and minimize DOM ops. Index keys break this when items are reordered, inserted at the start, or filtered: state sticks to the wrong item. Use a stable, unique ID.",
+        "difficulty": "easy",
+        "tags": [
+            "lists",
+            "reconciliation"
+        ]
+    },
+    {
+        "id": "react-controlled-vs-uncontrolled",
+        "topicSlug": "react",
+        "prompt": "Compare controlled and uncontrolled inputs in React. When is each preferable?",
+        "modelAnswer": "Controlled: value comes from React state, every keystroke triggers onChange. Uncontrolled: DOM owns the value; read via ref or formData. Use controlled when you need live UI based on the value; uncontrolled for simple submits and Server Actions.",
+        "difficulty": "medium",
+        "tags": [
+            "forms"
+        ]
+    },
+    {
+        "id": "react-memoization",
+        "topicSlug": "react",
+        "prompt": "When should you reach for useMemo, useCallback or React.memo?",
+        "modelAnswer": "Use them for expensive computations or to keep referential identity stable for memoized children/hook deps. Don't wrap everything: each memo costs deps comparison + cache. Profile first. The React Compiler automates much of this.",
+        "difficulty": "hard",
+        "tags": [
+            "performance",
+            "hooks"
+        ]
+    },
+    {
+        "id": "react-suspense",
+        "topicSlug": "react",
+        "prompt": "What does <Suspense> do, and how does it interact with data fetching in 2026?",
+        "modelAnswer": "Suspense lets a component pause rendering while a resource is pending, showing a fallback. With RSC and use(), you read promises directly inside components and Suspense streams the fallback first then patches the real content in.",
+        "difficulty": "hard",
+        "tags": [
+            "suspense",
+            "data-fetching"
+        ]
+    },
+    {
+        "id": "react-context-perf",
+        "topicSlug": "react",
+        "prompt": "Why can React Context become a performance footgun, and how do you mitigate it?",
+        "modelAnswer": "Every consumer re-renders when the context value's identity changes. Mitigations: split contexts, memoize the provider value, use a selector layer (useSyncExternalStore or a state library) for high-frequency state.",
+        "difficulty": "hard",
+        "tags": [
+            "context",
+            "performance"
+        ]
+    },
+    {
+        "id": "react-key-prop-reset",
+        "topicSlug": "react",
+        "prompt": "How can you use the `key` prop to force a component to fully reset its state?",
+        "modelAnswer": "When key changes, React unmounts the old instance and mounts a fresh one — state, refs, effects all reset. Useful for resetting a form when the underlying entity changes (<EditForm key={entity.id} />).",
+        "difficulty": "medium",
+        "tags": [
+            "keys",
+            "state"
+        ]
+    },
+    {
+        "id": "react-reducer-vs-state",
+        "topicSlug": "react",
+        "prompt": "When is useReducer a better choice than multiple useState calls?",
+        "modelAnswer": "Prefer useReducer when state transitions are coupled, when next state depends on previous in non-trivial ways, when you want explicit named actions for testing, or to share logic via context. Keep useState for independent values.",
+        "difficulty": "medium",
+        "tags": [
+            "state",
+            "hooks"
+        ]
+    },
+    {
+        "id": "react-strict-mode",
+        "topicSlug": "react",
+        "prompt": "What does React.StrictMode do in development, and why might effects run twice?",
+        "modelAnswer": "StrictMode renders components twice and runs effects (mount → cleanup → mount) only in development to surface bugs from impure rendering and missing cleanup. Production behavior is unaffected.",
+        "difficulty": "medium",
+        "tags": [
+            "effects",
+            "dev-tools"
+        ]
+    },
+    {
         "id": "next-server-actions",
         "topicSlug": "nextjs",
         "prompt": "What are Server Actions in Next.js 16 and when would you use them instead of a Route Handler?",
-        "modelAnswer": "Server Actions are async functions marked with 'use server' that run on the server and can be invoked directly from Server or Client Components, typically as form actions. They auto-handle CSRF, integrate with React's transitions and revalidation, and avoid manual fetch/JSON plumbing. Use Route Handlers (route.ts) for public APIs, webhooks, or non-form clients.",
+        "modelAnswer": "Server Actions are async functions marked with 'use server' that run on the server and can be invoked from Server or Client Components, typically as form actions. They auto-handle CSRF and integrate with revalidation. Use Route Handlers for public APIs, webhooks, or non-form clients.",
         "difficulty": "medium",
         "tags": [
             "server-actions",
@@ -110,10 +445,107 @@
         ]
     },
     {
+        "id": "next-app-vs-pages",
+        "topicSlug": "nextjs",
+        "prompt": "How does the App Router differ from the legacy Pages Router?",
+        "modelAnswer": "App Router: folder-based, RSC by default, layouts/templates, streaming with Suspense, route groups, parallel/intercepting routes, Server Actions, new caching model. Pages Router: getServerSideProps/getStaticProps, no RSC. New code should use App Router.",
+        "difficulty": "easy",
+        "tags": [
+            "routing"
+        ]
+    },
+    {
+        "id": "next-revalidation",
+        "topicSlug": "nextjs",
+        "prompt": "Compare revalidatePath, revalidateTag and time-based revalidate.",
+        "modelAnswer": "revalidatePath(path): invalidates a specific URL after a mutation. revalidateTag(tag): invalidates all fetches marked with that tag. Time-based: re-fetches every N seconds. Combine: tag fetches by domain, revalidate paths after Server Actions, add a TTL as safety net.",
+        "difficulty": "medium",
+        "tags": [
+            "caching"
+        ]
+    },
+    {
+        "id": "next-metadata",
+        "topicSlug": "nextjs",
+        "prompt": "How do you set per-page <title> and meta tags in the App Router?",
+        "modelAnswer": "Export a `metadata` object (static) or `generateMetadata` async function (dynamic) from a layout or page. Layouts merge with child pages. generateMetadata receives params/searchParams and can use the same fetch + cache.",
+        "difficulty": "easy",
+        "tags": [
+            "metadata",
+            "seo"
+        ]
+    },
+    {
+        "id": "next-middleware-vs-rsc",
+        "topicSlug": "nextjs",
+        "prompt": "When should logic live in middleware versus a server component or server action?",
+        "modelAnswer": "Middleware runs at the edge before rendering: ideal for auth gating, redirects, A/B routing, locale detection. Server components handle data + UI per route. Server actions handle mutations. Don't put DB access or heavy work in middleware.",
+        "difficulty": "medium",
+        "tags": [
+            "middleware",
+            "edge"
+        ]
+    },
+    {
+        "id": "next-streaming",
+        "topicSlug": "nextjs",
+        "prompt": "How does streaming work with Suspense in the App Router?",
+        "modelAnswer": "Next renders the route on the server and progressively flushes HTML as Server Components resolve. Sub-trees in <Suspense> render their fallback first; when data resolves, Next streams the real content with an inline script that swaps it in.",
+        "difficulty": "hard",
+        "tags": [
+            "streaming",
+            "suspense"
+        ]
+    },
+    {
+        "id": "next-dynamic-import",
+        "topicSlug": "nextjs",
+        "prompt": "When should you use next/dynamic for a Client Component?",
+        "modelAnswer": "Use it to code-split heavy client-only components (rich editors, charts, maps) not needed on initial render, or to skip SSR for components that touch window/document. Pair with ssr: false and a loading fallback.",
+        "difficulty": "medium",
+        "tags": [
+            "performance",
+            "code-splitting"
+        ]
+    },
+    {
+        "id": "next-cookies-headers",
+        "topicSlug": "nextjs",
+        "prompt": "How do you read cookies and request headers inside a Server Component or Server Action?",
+        "modelAnswer": "Import from 'next/headers': const cookieStore = await cookies(); cookieStore.get('session'). Same with headers(). Setting cookies is allowed in Server Actions and Route Handlers (not in Server Components).",
+        "difficulty": "medium",
+        "tags": [
+            "cookies",
+            "headers"
+        ]
+    },
+    {
+        "id": "next-env-vars",
+        "topicSlug": "nextjs",
+        "prompt": "What's the difference between an env var with NEXT_PUBLIC_ prefix and one without?",
+        "modelAnswer": "Without: only available on the server. With NEXT_PUBLIC_: inlined into the client bundle at build time. Never put secrets in NEXT_PUBLIC_; treat them as public.",
+        "difficulty": "easy",
+        "tags": [
+            "env",
+            "security"
+        ]
+    },
+    {
+        "id": "next-image",
+        "topicSlug": "nextjs",
+        "prompt": "What does <Image> from next/image give you over a plain <img>?",
+        "modelAnswer": "Automatic responsive srcset, lazy loading, modern formats (AVIF/WebP), explicit width/height to prevent CLS, blur placeholders, and on-demand resizing. Requires the optimizer (or a custom loader for static export).",
+        "difficulty": "easy",
+        "tags": [
+            "images",
+            "performance"
+        ]
+    },
+    {
         "id": "ts-generics",
         "topicSlug": "typescript",
         "prompt": "Why use generics instead of `any`? Show with a function signature.",
-        "modelAnswer": "Generics preserve the relationship between input and output types, while `any` discards all type information. Example: `function identity<T>(x: T): T { return x; }` — calling identity(42) returns number, identity('x') returns string. With `any`, both would return `any` and the caller loses autocomplete and type-checks downstream.",
+        "modelAnswer": "Generics preserve the relationship between input and output types. function identity<T>(x: T): T — identity(42) returns number, identity('x') returns string. With any, both return any and the caller loses type-checks.",
         "difficulty": "medium",
         "tags": [
             "generics",
@@ -123,18 +555,105 @@
     {
         "id": "ts-utility-types",
         "topicSlug": "typescript",
-        "prompt": "Explain Partial<T>, Required<T>, Pick<T,K> and Omit<T,K> with one realistic example each.",
-        "modelAnswer": "Partial<T> makes all props optional — useful for update payloads. Required<T> makes all required — useful when consuming a config after defaults are filled. Pick<T,K> selects a subset of keys — useful for DTOs. Omit<T,K> removes keys — useful to strip server-only fields before sending to client. They compose: e.g. Omit<Partial<User>, 'id'>.",
+        "prompt": "Explain Partial<T>, Required<T>, Pick<T,K> and Omit<T,K>.",
+        "modelAnswer": "Partial<T>: makes all props optional (update payloads). Required<T>: makes all required. Pick<T,K>: selects a subset (DTOs). Omit<T,K>: removes keys (strip server-only fields). They compose: Omit<Partial<User>, 'id'>.",
         "difficulty": "medium",
         "tags": [
             "utility-types"
         ]
     },
     {
+        "id": "ts-narrowing",
+        "topicSlug": "typescript",
+        "prompt": "What is type narrowing, and what techniques can the compiler use to do it?",
+        "modelAnswer": "Narrowing reduces a value's type within a branch where the compiler can prove a stricter type. Techniques: typeof, instanceof, equality checks, in operator, discriminated unions, user-defined predicates (x is Foo), assertion functions.",
+        "difficulty": "medium",
+        "tags": [
+            "narrowing"
+        ]
+    },
+    {
+        "id": "ts-unknown-vs-any",
+        "topicSlug": "typescript",
+        "prompt": "Compare unknown and any. When should you prefer unknown?",
+        "modelAnswer": "any opts out of type-checking. unknown is the type-safe top type: anything assignable to it, but you cannot use it without narrowing. Prefer unknown at API boundaries (parsed JSON, fetch responses, error in catch) and refine with Zod or guards.",
+        "difficulty": "medium",
+        "tags": [
+            "safety",
+            "types"
+        ]
+    },
+    {
+        "id": "ts-conditional-types",
+        "topicSlug": "typescript",
+        "prompt": "Explain conditional types with an example. What does `infer` do?",
+        "modelAnswer": "T extends U ? X : Y picks based on assignability. infer captures part of the matched type: type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never. Conditional types distribute over unions automatically.",
+        "difficulty": "hard",
+        "tags": [
+            "types",
+            "advanced"
+        ]
+    },
+    {
+        "id": "ts-mapped-types",
+        "topicSlug": "typescript",
+        "prompt": "What are mapped types and key remapping? Give an example.",
+        "modelAnswer": "Mapped types iterate over keys: type Readonly<T> = { readonly [K in keyof T]: T[K] }. Key remapping (TS 4.1+) lets you rename or filter: { [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K] }.",
+        "difficulty": "hard",
+        "tags": [
+            "types",
+            "mapped-types"
+        ]
+    },
+    {
+        "id": "ts-discriminated-unions",
+        "topicSlug": "typescript",
+        "prompt": "What is a discriminated union, and why are they idiomatic in TS?",
+        "modelAnswer": "A union of object types sharing a literal-typed discriminator: type Result = { ok: true; value: T } | { ok: false; error: string }. The compiler narrows in `if (r.ok)` blocks. They model state machines and result types better than throwing or nullables.",
+        "difficulty": "medium",
+        "tags": [
+            "unions",
+            "modeling"
+        ]
+    },
+    {
+        "id": "ts-zod-runtime",
+        "topicSlug": "typescript",
+        "prompt": "Why pair TypeScript with a runtime validator like Zod?",
+        "modelAnswer": "TS only checks at compile time. At runtime, untrusted data (HTTP bodies, env vars, JSON) can violate declared types. Zod parses and either returns a validated, fully-typed value or throws — keeping static type and runtime shape in sync. z.infer avoids duplicate type definitions.",
+        "difficulty": "easy",
+        "tags": [
+            "validation",
+            "runtime"
+        ]
+    },
+    {
+        "id": "ts-strict-flags",
+        "topicSlug": "typescript",
+        "prompt": "What does `strict: true` enable, and why is noUncheckedIndexedAccess worth turning on?",
+        "modelAnswer": "strict turns on strictNullChecks, noImplicitAny, strictFunctionTypes, strictBindCallApply, strictPropertyInitialization, alwaysStrict, useUnknownInCatchVariables. noUncheckedIndexedAccess (separate) makes arr[i] return T | undefined, forcing checks before use.",
+        "difficulty": "medium",
+        "tags": [
+            "compiler",
+            "strict"
+        ]
+    },
+    {
+        "id": "ts-as-const",
+        "topicSlug": "typescript",
+        "prompt": "What does `as const` do, and when is it useful?",
+        "modelAnswer": "as const narrows literals to exact values and makes arrays/objects readonly tuples. Useful for deriving union types from one source: const TABS = ['a','b'] as const; type Tab = typeof TABS[number]. Combine with z.enum or satisfies.",
+        "difficulty": "medium",
+        "tags": [
+            "literals",
+            "inference"
+        ]
+    },
+    {
         "id": "node-streams",
         "topicSlug": "node",
         "prompt": "Why are Node.js streams useful and what are the four main types?",
-        "modelAnswer": "Streams process data in chunks instead of loading everything into memory — essential for large files, network IO, and back-pressure handling. Four types: Readable (source), Writable (sink), Duplex (both, e.g. TCP socket), Transform (Duplex that mutates, e.g. zlib gzip). Pipe them together with .pipe() or stream/promises for async/await.",
+        "modelAnswer": "Streams process data in chunks instead of loading everything into memory. Four types: Readable (source), Writable (sink), Duplex (both, e.g. TCP socket), Transform (Duplex that mutates, e.g. zlib). Pipe with .pipe() or stream/promises.",
         "difficulty": "medium",
         "tags": [
             "streams",
@@ -144,12 +663,100 @@
     {
         "id": "node-error-handling",
         "topicSlug": "node",
-        "prompt": "How do you handle uncaught errors in async code in Node.js? Mention rejected promises and EventEmitter errors.",
-        "modelAnswer": "Always wrap awaited promises in try/catch or attach .catch(). Listen to 'unhandledRejection' and 'uncaughtException' as last-resort logs and graceful shutdown — never to ignore errors. EventEmitters: attach an 'error' listener, otherwise the process crashes. For HTTP servers, surface errors via the response and a centralized error middleware.",
+        "prompt": "How do you handle uncaught errors in async code in Node.js?",
+        "modelAnswer": "Wrap awaited promises in try/catch or attach .catch(). Listen to 'unhandledRejection' and 'uncaughtException' as last-resort logs and graceful shutdown. EventEmitters need an 'error' listener or the process crashes. Centralize HTTP errors in middleware.",
         "difficulty": "hard",
         "tags": [
             "errors",
             "async"
+        ]
+    },
+    {
+        "id": "node-event-loop-phases",
+        "topicSlug": "node",
+        "prompt": "Name the main phases of the Node.js event loop in order.",
+        "modelAnswer": "timers → pending callbacks → idle/prepare → poll (I/O) → check (setImmediate) → close callbacks. Microtasks (Promise then, queueMicrotask) and process.nextTick run between every phase, draining fully. nextTick has priority over Promise microtasks.",
+        "difficulty": "hard",
+        "tags": [
+            "event-loop",
+            "internals"
+        ]
+    },
+    {
+        "id": "node-cluster-vs-worker-threads",
+        "topicSlug": "node",
+        "prompt": "When would you use cluster versus worker_threads in Node?",
+        "modelAnswer": "cluster forks processes (one per CPU) sharing a port — best for stateless HTTP servers across cores. worker_threads run JS in the same process with shared memory — best for CPU-bound work. Avoid threads for IO-bound code.",
+        "difficulty": "hard",
+        "tags": [
+            "concurrency",
+            "scaling"
+        ]
+    },
+    {
+        "id": "node-buffer-vs-string",
+        "topicSlug": "node",
+        "prompt": "Why does Node use Buffer for binary data instead of strings?",
+        "modelAnswer": "Buffers are raw bytes (Uint8Array) — no encoding assumption, exact size, suitable for binary protocols, files, crypto. Converting to a string requires choosing an encoding and may split multi-byte chars on partial reads; use string_decoder.",
+        "difficulty": "medium",
+        "tags": [
+            "buffer",
+            "encoding"
+        ]
+    },
+    {
+        "id": "node-package-json-exports",
+        "topicSlug": "node",
+        "prompt": "What does the \"exports\" field in package.json control, and why is it stricter than \"main\"?",
+        "modelAnswer": "exports defines an explicit public API: which paths are importable and which conditions resolve to which file. Anything not listed is unreachable from outside. main only sets the default entry. exports also enables dual ESM/CJS packaging.",
+        "difficulty": "medium",
+        "tags": [
+            "modules",
+            "packaging"
+        ]
+    },
+    {
+        "id": "node-fs-promises",
+        "topicSlug": "node",
+        "prompt": "What's the difference between fs, fs/promises and fs.promises?",
+        "modelAnswer": "fs: classic callback API (with *Sync). fs.promises: promise variant on the fs object. fs/promises: ES module subpath. Modern code should always use the promise API and 'node:' specifier; sync APIs only at startup.",
+        "difficulty": "easy",
+        "tags": [
+            "fs",
+            "modules"
+        ]
+    },
+    {
+        "id": "node-env-secrets",
+        "topicSlug": "node",
+        "prompt": "How should secrets be loaded into a Node app, and why is committing .env a problem?",
+        "modelAnswer": "Load from environment variables provided by the host (systemd, container, secrets manager). Locally, dotenv reads .env into process.env. Never commit .env — it leaks credentials into git history. Commit .env.example with non-secret keys.",
+        "difficulty": "easy",
+        "tags": [
+            "secrets",
+            "config"
+        ]
+    },
+    {
+        "id": "node-http-keepalive",
+        "topicSlug": "node",
+        "prompt": "What is HTTP keep-alive in Node, and why does the default Agent matter for outbound calls?",
+        "modelAnswer": "Keep-alive reuses a TCP/TLS connection for multiple requests, avoiding handshake overhead. For high-throughput outbound services, configure a custom Agent (keepAlive: true, maxSockets, timeout) or use undici/fetch which pool by default.",
+        "difficulty": "hard",
+        "tags": [
+            "http",
+            "performance"
+        ]
+    },
+    {
+        "id": "node-graceful-shutdown",
+        "topicSlug": "node",
+        "prompt": "Describe a graceful shutdown sequence for an HTTP server in Node.",
+        "modelAnswer": "On SIGTERM/SIGINT: stop accepting connections (server.close()), drain in-flight requests, close DB pools and queues, flush logs, exit(0). Set a hard timeout that calls process.exit(1) if cleanup hangs. Behind a load balancer, send 'not ready' first.",
+        "difficulty": "hard",
+        "tags": [
+            "lifecycle",
+            "deployment"
         ]
     }
 ]

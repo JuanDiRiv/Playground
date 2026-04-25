@@ -62,6 +62,7 @@ export default async function QaQuestionPage({
             <QaAnswerForm
                 topicSlug={topic.slug}
                 questionId={question.id}
+                questionPrompt={question.prompt}
                 modelAnswer={question.modelAnswer}
                 hint={question.hint}
             />

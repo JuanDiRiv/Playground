@@ -65,7 +65,12 @@ export async function ensureUserDocument(user: SessionUser): Promise<void> {
   const ref = db.collection("users").doc(user.uid);
   const snap = await ref.get();
   if (snap.exists) {
-    await ref.update({ lastLoginAt: new Date() });
+    await ref.update({
+      lastLoginAt: new Date(),
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      email: user.email,
+    });
     return;
   }
   await ref.set({

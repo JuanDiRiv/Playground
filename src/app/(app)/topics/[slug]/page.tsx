@@ -9,8 +9,11 @@ import {
     listQuestions,
 } from "@/lib/content/queries";
 import { getTopicProgress } from "@/lib/content/topic-progress";
+import { getQaHistory } from "@/lib/content/qa-history";
 import { getSessionUser } from "@/lib/firebase/auth-server";
 import { formatMinSec } from "@/lib/utils/format";
+import { GenerateQaButton } from "./generate-button";
+import { ScoreSparkline } from "@/components/score-sparkline";
 
 const DIFFICULTY_COLOR: Record<string, string> = {
     easy: "bg-emerald-500/15 text-emerald-300",
@@ -53,12 +56,13 @@ export default async function TopicPage({
     const user = await getSessionUser();
     if (!user) notFound();
 
-    const [topic, questions, exercises, challenges, progress] = await Promise.all([
+    const [topic, questions, exercises, challenges, progress, qaHistory] = await Promise.all([
         getTopic(topicSlug),
         listQuestions(topicSlug),
         listExercises(topicSlug),
         listChallenges(topicSlug),
         getTopicProgress(user.uid, topicSlug),
+        getQaHistory(user.uid, topicSlug, 30),
     ]);
 
     if (!topic) notFound();
@@ -272,6 +276,13 @@ export default async function TopicPage({
                     </span>
                 </div>
             </section>
+
+            {activeTab === "qa" ? (
+                <div className="space-y-3">
+                    <ScoreSparkline points={qaHistory} />
+                    <GenerateQaButton topicSlug={topicSlug} />
+                </div>
+            ) : null}
 
             <ItemList items={filtered} basePath={basePath} />
         </div>

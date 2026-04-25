@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, Lightbulb, Loader2, XCircle } from "lucide-react";
+import { CheckCircle2, Lightbulb, Loader2, Sparkles, XCircle } from "lucide-react";
 import type { TopicSlug } from "@/lib/schemas/content";
 import type { QaFeedback } from "@/lib/ai/qa";
 import { evaluateQuestionAction } from "./actions";
@@ -30,11 +30,13 @@ const VERDICT_STYLE: Record<
 export function QaAnswerForm({
     topicSlug,
     questionId,
+    questionPrompt,
     modelAnswer,
     hint,
 }: {
     topicSlug: TopicSlug;
     questionId: string;
+    questionPrompt: string;
     modelAnswer: string;
     hint?: string;
 }) {
@@ -44,6 +46,42 @@ export function QaAnswerForm({
     const [showHint, setShowHint] = useState(false);
     const [showModel, setShowModel] = useState(false);
     const [isPending, startTransition] = useTransition();
+
+    // ---- streaming explanation state (F1) ----
+    const [explanation, setExplanation] = useState<string>("");
+    const [streaming, setStreaming] = useState(false);
+    const [streamError, setStreamError] = useState<string | null>(null);
+
+    async function streamExplanation() {
+        setStreamError(null);
+        setExplanation("");
+        setStreaming(true);
+        try {
+            const res = await fetch("/api/ai/stream", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    mode: "qa-explain",
+                    prompt: `Topic: ${topicSlug}\nQuestion: ${questionPrompt}\nReference answer: ${modelAnswer}${answer.trim() ? `\nUser answer: ${answer}` : ""}`,
+                }),
+            });
+            if (!res.ok || !res.body) {
+                const data = await res.json().catch(() => null);
+                throw new Error(data?.error ?? `Stream failed (${res.status})`);
+            }
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                setExplanation((prev) => prev + decoder.decode(value, { stream: true }));
+            }
+        } catch (e) {
+            setStreamError(e instanceof Error ? e.message : "Stream failed");
+        } finally {
+            setStreaming(false);
+        }
+    }
 
     function onSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -116,6 +154,45 @@ export function QaAnswerForm({
             ) : null}
 
             {feedback ? <FeedbackCard feedback={feedback} /> : null}
+
+            {feedback ? (
+                <div className="rounded-2xl border border-border bg-bg-elevated p-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm font-medium text-fg">
+                            <Sparkles className="h-4 w-4 text-brand-400" />
+                            Detailed explanation
+                        </div>
+                        <button
+                            type="button"
+                            onClick={streamExplanation}
+                            disabled={streaming}
+                            className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-fg-muted hover:text-fg disabled:opacity-50"
+                        >
+                            {streaming ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Streaming…
+                                </>
+                            ) : explanation ? (
+                                "Regenerate"
+                            ) : (
+                                "Explain in detail"
+                            )}
+                        </button>
+                    </div>
+                    {streamError ? (
+                        <p className="mt-3 text-sm text-red-300">{streamError}</p>
+                    ) : null}
+                    {explanation ? (
+                        <p
+                            className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-fg"
+                            aria-live="polite"
+                        >
+                            {explanation}
+                            {streaming ? <span className="ml-0.5 animate-pulse">▍</span> : null}
+                        </p>
+                    ) : null}
+                </div>
+            ) : null}
 
             <div className="rounded-xl border border-border bg-bg-elevated p-4">
                 <button

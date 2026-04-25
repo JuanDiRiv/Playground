@@ -5,8 +5,9 @@ import { getSessionUser } from "@/lib/firebase/auth-server";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/practice", label: "Practice" },
   { href: "/topics", label: "Topics" },
-  { href: "/challenges", label: "Challenges" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
 export async function AppNav() {

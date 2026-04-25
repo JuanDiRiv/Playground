@@ -1,5 +1,77 @@
 [
     {
+        "id": "html-landing-page",
+        "topicSlug": "html",
+        "type": "sandbox",
+        "title": "Build a landing page in 5 minutes",
+        "description": "Build a single semantic landing page with header, hero, two feature cards, and footer. Aim for clean structure over visual polish.",
+        "difficulty": "medium",
+        "targetTimeSec": 300,
+        "starter": {
+            "index.html": "<!-- TODO -->\n",
+            "styles.css": "body { font-family: system-ui; margin: 0; padding: 16px; background: #fff; }\n"
+        },
+        "tags": [
+            "semantics",
+            "speed"
+        ],
+        "tests": []
+    },
+    {
+        "id": "html-modal-a11y",
+        "topicSlug": "html",
+        "type": "sandbox",
+        "title": "Accessible modal markup",
+        "description": "Write the static markup for an accessible modal: role=dialog, aria-modal, aria-labelledby pointing at the title, a close button labelled with aria-label.",
+        "difficulty": "hard",
+        "targetTimeSec": 240,
+        "starter": {
+            "index.html": "<button>Open</button>\n<!-- TODO modal markup -->\n",
+            "styles.css": "body { padding: 16px; }\n[role=dialog] { border: 1px solid #ccc; padding: 16px; max-width: 400px; }\n"
+        },
+        "tags": [
+            "a11y",
+            "dialog"
+        ],
+        "tests": []
+    },
+    {
+        "id": "css-grid-gallery",
+        "topicSlug": "css",
+        "type": "sandbox",
+        "title": "Build a responsive image grid",
+        "description": "Use CSS Grid to display the cards in a responsive layout: 1 column on mobile, 2 on tablet (≥640px), 3 on desktop (≥1024px). Use a 16px gap.",
+        "difficulty": "medium",
+        "targetTimeSec": 240,
+        "starter": {
+            "index.html": "<div class=\"grid\">\n  <div class=\"card\">1</div>\n  <div class=\"card\">2</div>\n  <div class=\"card\">3</div>\n  <div class=\"card\">4</div>\n  <div class=\"card\">5</div>\n  <div class=\"card\">6</div>\n</div>\n",
+            "styles.css": ".grid { /* TODO */ }\n.card { background: #6366f1; color: white; padding: 32px; border-radius: 12px; text-align: center; }\n"
+        },
+        "tags": [
+            "grid",
+            "responsive"
+        ],
+        "tests": []
+    },
+    {
+        "id": "css-sticky-header",
+        "topicSlug": "css",
+        "type": "sandbox",
+        "title": "Sticky header with shadow on scroll",
+        "description": "Make the header position: sticky with top: 0. The body below should be tall enough to scroll. Add a subtle shadow.",
+        "difficulty": "easy",
+        "targetTimeSec": 180,
+        "starter": {
+            "index.html": "<header>Header</header>\n<main>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n<p>Scroll content</p>\n</main>\n",
+            "styles.css": "body { margin: 0; font-family: system-ui; }\nheader { background: #6366f1; color: white; padding: 12px 16px; /* TODO */ }\nmain { padding: 16px; }\np { padding: 12px; background: #f3f4f6; margin: 8px 0; }\n"
+        },
+        "tags": [
+            "positioning",
+            "scroll"
+        ],
+        "tests": []
+    },
+    {
         "id": "js-flatten",
         "topicSlug": "javascript",
         "type": "worker",
@@ -62,21 +134,109 @@
         ]
     },
     {
-        "id": "css-grid-gallery",
-        "topicSlug": "css",
-        "type": "sandbox",
-        "title": "Build a responsive image grid",
-        "description": "Use CSS Grid to display the cards in a responsive layout: 1 column on mobile, 2 on tablet (≥640px), 3 on desktop (≥1024px). Use a 16px gap.",
-        "difficulty": "medium",
-        "targetTimeSec": 240,
+        "id": "js-promise-all",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Implement Promise.all",
+        "description": "Implement `promiseAll(arr)` mirroring Promise.all: resolves with an array of values when all input promises resolve, rejects on the first rejection.",
+        "difficulty": "hard",
+        "targetTimeSec": 420,
         "starter": {
-            "index.html": "<div class=\"grid\">\n  <div class=\"card\">1</div>\n  <div class=\"card\">2</div>\n  <div class=\"card\">3</div>\n  <div class=\"card\">4</div>\n  <div class=\"card\">5</div>\n  <div class=\"card\">6</div>\n</div>\n",
-            "styles.css": ".grid {\n  /* TODO: responsive grid */\n}\n.card {\n  background: #6366f1;\n  color: white;\n  padding: 32px;\n  border-radius: 12px;\n  text-align: center;\n}\n"
+            "solution.js": "function promiseAll(arr) {\n  // TODO\n}\n"
         },
-        "tags": [
-            "grid",
-            "responsive"
+        "solution": "function promiseAll(arr) {\n  return new Promise((resolve, reject) => {\n    const out = new Array(arr.length);\n    let pending = arr.length;\n    if (pending === 0) return resolve([]);\n    arr.forEach((p, i) => {\n      Promise.resolve(p).then(\n        (v) => { out[i] = v; if (--pending === 0) resolve(out); },\n        reject,\n      );\n    });\n  });\n}",
+        "tests": [
+            {
+                "name": "resolves with values in order",
+                "body": "const r = await promiseAll([Promise.resolve(1), Promise.resolve(2)]); expect(r).toEqual([1, 2]);"
+            },
+            {
+                "name": "rejects on first failure",
+                "body": "let err; try { await promiseAll([Promise.resolve(1), Promise.reject(new Error('x'))]); } catch (e) { err = e; } expect(err.message).toBe('x');"
+            },
+            {
+                "name": "empty array resolves to []",
+                "body": "expect(await promiseAll([])).toEqual([]);"
+            }
         ],
-        "tests": []
+        "tags": [
+            "promises",
+            "async"
+        ]
+    },
+    {
+        "id": "react-toggle-component",
+        "topicSlug": "react",
+        "type": "conceptual",
+        "title": "Build a Toggle component (5 min)",
+        "description": "Build a controlled <Toggle checked onChange /> component with proper aria-pressed and keyboard support (Space/Enter).",
+        "difficulty": "medium",
+        "targetTimeSec": 300,
+        "starter": {
+            "Toggle.tsx": "// TODO\n"
+        },
+        "rubric": "Solution should: (1) accept checked + onChange props, (2) be a <button> with aria-pressed, (3) toggle on click and keyboard, (4) be visually styleable via classNames or data attributes.",
+        "tags": [
+            "components",
+            "a11y"
+        ]
+    },
+    {
+        "id": "next-action-validation",
+        "topicSlug": "nextjs",
+        "type": "conceptual",
+        "title": "Server Action with Zod & error state",
+        "description": "Write a server action `createPost(prevState, formData)` that validates with Zod, returns a typed errors object on failure, and revalidates the path on success.",
+        "difficulty": "hard",
+        "targetTimeSec": 480,
+        "starter": {
+            "actions.ts": "// TODO\n"
+        },
+        "rubric": "Solution should: (1) declare 'use server', (2) parse FormData with a Zod schema, (3) return { ok: false, errors } shape on failure, (4) revalidatePath on success, (5) be usable with useActionState.",
+        "tags": [
+            "server-actions",
+            "validation"
+        ]
+    },
+    {
+        "id": "ts-readonly-deep",
+        "topicSlug": "typescript",
+        "type": "worker",
+        "title": "Type-only: DeepReadonly",
+        "description": "Define `DeepReadonly<T>` that makes every nested property readonly, including arrays.",
+        "difficulty": "hard",
+        "targetTimeSec": 360,
+        "starter": {
+            "solution.ts": "// type DeepReadonly<T> = ...\n\nfunction smoke() { return true; }\n"
+        },
+        "solution": "type DeepReadonly<T> = T extends (...args: any) => any ? T : T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> } : T;",
+        "tests": [
+            {
+                "name": "smoke",
+                "body": "expect(smoke()).toBe(true);"
+            }
+        ],
+        "rubric": "Use a recursive mapped type with conditional handling for functions and primitives.",
+        "tags": [
+            "mapped-types",
+            "advanced"
+        ]
+    },
+    {
+        "id": "node-rate-limiter",
+        "topicSlug": "node",
+        "type": "conceptual",
+        "title": "In-memory rate limiter",
+        "description": "Implement `createLimiter({ max, windowMs })` returning `try(key)` that returns true if the call is allowed. Use a sliding window per key.",
+        "difficulty": "hard",
+        "targetTimeSec": 480,
+        "starter": {
+            "solution.ts": "// TODO\n"
+        },
+        "rubric": "Solution should: (1) keep a Map<key, timestamps[]>, (2) on each call, drop timestamps older than now - windowMs, (3) allow if remaining count < max and push the current timestamp, else deny, (4) handle cleanup of empty entries.",
+        "tags": [
+            "concurrency",
+            "rate-limit"
+        ]
     }
 ]

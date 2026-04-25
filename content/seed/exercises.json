@@ -16,6 +16,40 @@
         "tests": []
     },
     {
+        "id": "html-form-a11y",
+        "topicSlug": "html",
+        "type": "sandbox",
+        "title": "Make a login form accessible",
+        "description": "Associate every input with a <label>, mark required fields with the `required` attribute, and use the right input types (email, password). The form should be keyboard-navigable.",
+        "difficulty": "easy",
+        "starter": {
+            "index.html": "<form>\n  <div>Email</div>\n  <input />\n  <div>Password</div>\n  <input />\n  <button>Sign in</button>\n</form>\n",
+            "styles.css": "body { font-family: system-ui; padding: 16px; }\nform { display: grid; gap: 8px; max-width: 300px; }\n"
+        },
+        "tags": [
+            "forms",
+            "accessibility"
+        ],
+        "tests": []
+    },
+    {
+        "id": "html-table-semantic",
+        "topicSlug": "html",
+        "type": "sandbox",
+        "title": "Build a semantic data table",
+        "description": "Render a small table of users with proper <thead>, <tbody>, <th scope=col> and a <caption>.",
+        "difficulty": "medium",
+        "starter": {
+            "index.html": "<div class=\"users\">\n  <div>Name | Role | Joined</div>\n  <div>Alice | Admin | 2024</div>\n  <div>Bob | User | 2025</div>\n</div>\n",
+            "styles.css": "body { font-family: system-ui; padding: 16px; }\ntable { border-collapse: collapse; }\ntd, th { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }\ncaption { text-align: left; padding: 4px 0; font-weight: 600; }\n"
+        },
+        "tags": [
+            "tables",
+            "semantics"
+        ],
+        "tests": []
+    },
+    {
         "id": "css-flex-center",
         "topicSlug": "css",
         "type": "sandbox",
@@ -29,6 +63,40 @@
         "tags": [
             "flexbox",
             "layout"
+        ],
+        "tests": []
+    },
+    {
+        "id": "css-card-grid",
+        "topicSlug": "css",
+        "type": "sandbox",
+        "title": "Auto-fit card grid",
+        "description": "Use CSS Grid with repeat(auto-fit, minmax()) so cards fill the row and wrap to new rows responsively. Minimum card width: 180px.",
+        "difficulty": "medium",
+        "starter": {
+            "index.html": "<div class=\"grid\">\n  <div class=\"card\">A</div>\n  <div class=\"card\">B</div>\n  <div class=\"card\">C</div>\n  <div class=\"card\">D</div>\n  <div class=\"card\">E</div>\n</div>\n",
+            "styles.css": "body { background: #0e0e14; padding: 16px; }\n.grid {\n  display: grid;\n  /* TODO: auto-fit, minmax */\n  gap: 12px;\n}\n.card {\n  background: #6366f1;\n  color: white;\n  padding: 24px;\n  border-radius: 12px;\n  text-align: center;\n}\n"
+        },
+        "tags": [
+            "grid",
+            "responsive"
+        ],
+        "tests": []
+    },
+    {
+        "id": "css-button-states",
+        "topicSlug": "css",
+        "type": "sandbox",
+        "title": "Style button states",
+        "description": "Style the button so it has visible :hover, :focus-visible and :disabled states with smooth transitions.",
+        "difficulty": "easy",
+        "starter": {
+            "index.html": "<button>Click me</button>\n<button disabled>Disabled</button>\n",
+            "styles.css": "body { padding: 24px; background: #fff; }\nbutton {\n  /* TODO */\n}\n"
+        },
+        "tags": [
+            "accessibility",
+            "states"
         ],
         "tests": []
     },
@@ -97,6 +165,92 @@
         ]
     },
     {
+        "id": "js-unique",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Deduplicate an array",
+        "description": "Implement `unique(arr)` that returns a new array with duplicates removed, preserving the original order.",
+        "difficulty": "easy",
+        "starter": {
+            "solution.js": "function unique(arr) {\n  // TODO\n}\n"
+        },
+        "solution": "function unique(arr) {\n  return Array.from(new Set(arr));\n}",
+        "tests": [
+            {
+                "name": "removes duplicates",
+                "body": "expect(unique([1, 2, 2, 3, 1])).toEqual([1, 2, 3]);"
+            },
+            {
+                "name": "preserves order",
+                "body": "expect(unique(['b', 'a', 'b', 'c'])).toEqual(['b', 'a', 'c']);"
+            },
+            {
+                "name": "empty array",
+                "body": "expect(unique([])).toEqual([]);"
+            }
+        ],
+        "tags": [
+            "arrays",
+            "set"
+        ]
+    },
+    {
+        "id": "js-deep-clone",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Deep-clone a plain object",
+        "description": "Implement `deepClone(obj)` that recursively clones plain objects and arrays. You may assume only primitives, plain objects and arrays.",
+        "difficulty": "medium",
+        "starter": {
+            "solution.js": "function deepClone(obj) {\n  // TODO\n}\n"
+        },
+        "solution": "function deepClone(obj) {\n  if (obj === null || typeof obj !== 'object') return obj;\n  if (Array.isArray(obj)) return obj.map(deepClone);\n  const out = {};\n  for (const k of Object.keys(obj)) out[k] = deepClone(obj[k]);\n  return out;\n}",
+        "tests": [
+            {
+                "name": "primitive passes through",
+                "body": "expect(deepClone(5)).toBe(5);"
+            },
+            {
+                "name": "clones nested object",
+                "body": "const a = { x: { y: 1 } }; const b = deepClone(a); b.x.y = 9; expect(a.x.y).toBe(1);"
+            },
+            {
+                "name": "clones arrays",
+                "body": "const a = [1, [2, 3]]; const b = deepClone(a); b[1][0] = 99; expect(a[1][0]).toBe(2);"
+            }
+        ],
+        "tags": [
+            "objects",
+            "recursion"
+        ]
+    },
+    {
+        "id": "js-group-by",
+        "topicSlug": "javascript",
+        "type": "worker",
+        "title": "Implement groupBy",
+        "description": "Implement `groupBy(arr, keyFn)` returning an object where keys are produced by keyFn(item) and values are arrays of matching items.",
+        "difficulty": "medium",
+        "starter": {
+            "solution.js": "function groupBy(arr, keyFn) {\n  // TODO\n}\n"
+        },
+        "solution": "function groupBy(arr, keyFn) {\n  const out = {};\n  for (const item of arr) {\n    const k = keyFn(item);\n    (out[k] ||= []).push(item);\n  }\n  return out;\n}",
+        "tests": [
+            {
+                "name": "groups by key",
+                "body": "const r = groupBy([1, 2, 3, 4], (n) => (n % 2 ? 'odd' : 'even')); expect(r.odd).toEqual([1, 3]); expect(r.even).toEqual([2, 4]);"
+            },
+            {
+                "name": "empty array",
+                "body": "expect(groupBy([], () => 'x')).toEqual({});"
+            }
+        ],
+        "tags": [
+            "arrays",
+            "objects"
+        ]
+    },
+    {
         "id": "react-counter-hook",
         "topicSlug": "react",
         "type": "conceptual",
@@ -106,10 +260,42 @@
         "starter": {
             "Counter.tsx": "import { useState } from 'react';\n\nexport function Counter() {\n  const [value, setValue] = useState(0);\n  return (\n    <div>\n      <button onClick={() => setValue((v) => v - 1)}>-</button>\n      <span>{value}</span>\n      <button onClick={() => setValue((v) => v + 1)}>+</button>\n    </div>\n  );\n}\n"
         },
-        "rubric": "Solution should: (1) define `useCounter(initial = 0)` that returns { value, increment, decrement, reset }; (2) Counter consumes the hook; (3) functions are stable (useCallback or defined in module/closure); (4) no unnecessary re-renders.",
+        "rubric": "Solution should: (1) define `useCounter(initial = 0)` returning { value, increment, decrement, reset }; (2) Counter consumes the hook; (3) functions are stable (useCallback or defined in module/closure); (4) no unnecessary re-renders.",
         "tags": [
             "hooks",
             "refactor"
+        ]
+    },
+    {
+        "id": "react-controlled-form",
+        "topicSlug": "react",
+        "type": "conceptual",
+        "title": "Convert to a controlled form",
+        "description": "The form below uses uncontrolled inputs. Convert it to a controlled form with a single state object and submit handler that logs the values.",
+        "difficulty": "medium",
+        "starter": {
+            "Form.tsx": "export function Form() {\n  return (\n    <form>\n      <input name=\"name\" />\n      <input name=\"email\" type=\"email\" />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}\n"
+        },
+        "rubric": "Solution should: (1) hold values in a single useState object, (2) bind value + onChange on each input, (3) prevent default on submit, (4) log the typed values.",
+        "tags": [
+            "forms",
+            "state"
+        ]
+    },
+    {
+        "id": "react-effect-cleanup",
+        "topicSlug": "react",
+        "type": "conceptual",
+        "title": "Add cleanup to an effect",
+        "description": "The component sets up an interval but never cleans it up. Fix the effect so the interval is cleared on unmount and when the delay prop changes.",
+        "difficulty": "easy",
+        "starter": {
+            "Ticker.tsx": "import { useEffect, useState } from 'react';\n\nexport function Ticker({ delay }: { delay: number }) {\n  const [n, setN] = useState(0);\n  useEffect(() => {\n    setInterval(() => setN((v) => v + 1), delay);\n  }, [delay]);\n  return <span>{n}</span>;\n}\n"
+        },
+        "rubric": "Solution should: (1) capture the interval id, (2) return a cleanup function that calls clearInterval, (3) include delay in deps, (4) avoid the leak when delay changes.",
+        "tags": [
+            "effects",
+            "cleanup"
         ]
     },
     {
@@ -122,10 +308,26 @@
         "starter": {
             "page.tsx": "export default function Page() {\n  return (\n    <form>\n      <input name=\"title\" />\n      <button type=\"submit\">Add</button>\n    </form>\n  );\n}\n"
         },
-        "rubric": "Solution should: (1) define an async function with 'use server' (inline or imported), (2) use FormData.get and validate with Zod, (3) call revalidatePath after the mutation, (4) handle the validation error path.",
+        "rubric": "Solution should: (1) define an async function with 'use server', (2) use FormData.get and validate with Zod, (3) call revalidatePath after the mutation, (4) handle the validation error path.",
         "tags": [
             "server-actions",
             "forms"
+        ]
+    },
+    {
+        "id": "next-loading-suspense",
+        "topicSlug": "nextjs",
+        "type": "conceptual",
+        "title": "Stream a slow data section",
+        "description": "Wrap the slow <Posts /> component in <Suspense> so the rest of the page renders immediately while posts load. Provide a fallback skeleton.",
+        "difficulty": "medium",
+        "starter": {
+            "page.tsx": "import { Posts } from './posts';\n\nexport default function Page() {\n  return (\n    <div>\n      <h1>Feed</h1>\n      <Posts />\n    </div>\n  );\n}\n"
+        },
+        "rubric": "Solution should: (1) import Suspense from react, (2) wrap <Posts /> with <Suspense fallback={<Skeleton />}>, (3) keep the rest of the page outside the boundary, (4) explain why this enables streaming.",
+        "tags": [
+            "suspense",
+            "streaming"
         ]
     },
     {
@@ -149,6 +351,86 @@
         "tags": [
             "generics",
             "mapped-types"
+        ]
+    },
+    {
+        "id": "ts-result-type",
+        "topicSlug": "typescript",
+        "type": "conceptual",
+        "title": "Model a Result type",
+        "description": "Define a discriminated union `Result<T, E>` representing success or failure, and a helper `unwrap(r)` that throws on error and returns the value otherwise. Give a usage example.",
+        "difficulty": "medium",
+        "starter": {
+            "solution.ts": "// type Result<T, E> = ...\n// function unwrap<T, E>(r: Result<T, E>): T { /* TODO */ }\n"
+        },
+        "rubric": "Solution should: (1) define Result<T,E> = { ok: true; value: T } | { ok: false; error: E }, (2) implement unwrap that narrows on r.ok, (3) show a usage example.",
+        "tags": [
+            "discriminated-unions",
+            "modeling"
+        ]
+    },
+    {
+        "id": "ts-zod-parse",
+        "topicSlug": "typescript",
+        "type": "conceptual",
+        "title": "Validate API input with Zod",
+        "description": "Given an unknown JSON body, define a Zod schema for { email: string; age: number } and return either a typed object or a validation error.",
+        "difficulty": "easy",
+        "starter": {
+            "solution.ts": "import { z } from 'zod';\n\nexport function parseUser(input: unknown) {\n  // TODO\n}\n"
+        },
+        "rubric": "Solution should: (1) define a Zod schema with email validation and age >= 0, (2) call schema.safeParse, (3) return a discriminated result (success with data, failure with error.flatten()).",
+        "tags": [
+            "zod",
+            "validation"
+        ]
+    },
+    {
+        "id": "node-read-file-async",
+        "topicSlug": "node",
+        "type": "conceptual",
+        "title": "Read a JSON file with fs/promises",
+        "description": "Write an async function `readUsers(path)` that reads a JSON file, parses it and returns the array of users. Errors should bubble.",
+        "difficulty": "easy",
+        "starter": {
+            "solution.ts": "import { readFile } from 'node:fs/promises';\n\nexport async function readUsers(path: string) {\n  // TODO\n}\n"
+        },
+        "rubric": "Solution should: (1) await readFile with utf8 encoding, (2) JSON.parse the result, (3) optionally validate the shape, (4) let unexpected errors propagate (no swallowing).",
+        "tags": [
+            "fs",
+            "async"
+        ]
+    },
+    {
+        "id": "node-http-server",
+        "topicSlug": "node",
+        "type": "conceptual",
+        "title": "Minimal HTTP server",
+        "description": "Implement a Node http server that responds with JSON `{ ok: true }` on GET / and 404 on anything else.",
+        "difficulty": "easy",
+        "starter": {
+            "server.ts": "import { createServer } from 'node:http';\n\nconst server = createServer((req, res) => {\n  // TODO\n});\n\nserver.listen(3000);\n"
+        },
+        "rubric": "Solution should: (1) check req.method === 'GET' and req.url === '/', (2) set Content-Type: application/json, (3) end with JSON.stringify({ ok: true }), (4) return 404 for everything else.",
+        "tags": [
+            "http",
+            "server"
+        ]
+    },
+    {
+        "id": "node-stream-pipeline",
+        "topicSlug": "node",
+        "type": "conceptual",
+        "title": "Pipe a file through gzip",
+        "description": "Use stream pipeline to gzip an input file into an output file. Errors must reject.",
+        "difficulty": "medium",
+        "starter": {
+            "solution.ts": "import { pipeline } from 'node:stream/promises';\nimport { createReadStream, createWriteStream } from 'node:fs';\nimport { createGzip } from 'node:zlib';\n\nexport async function gzipFile(input: string, output: string) {\n  // TODO\n}\n"
+        },
+        "rubric": "Solution should: (1) await pipeline(createReadStream(input), createGzip(), createWriteStream(output)), (2) let errors throw via the awaited pipeline, (3) avoid manual .pipe() chaining.",
+        "tags": [
+            "streams",
+            "zlib"
         ]
     }
 ]
