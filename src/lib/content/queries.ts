@@ -32,6 +32,20 @@ export async function listQuestions(slug: TopicSlug): Promise<Question[]> {
   return snap.docs.map((doc) => QuestionSchema.parse(doc.data()));
 }
 
+export async function getQuestion(
+  slug: TopicSlug,
+  id: string,
+): Promise<Question | null> {
+  const doc = await getAdminDb()
+    .collection("topics")
+    .doc(slug)
+    .collection("questions")
+    .doc(id)
+    .get();
+  if (!doc.exists) return null;
+  return QuestionSchema.parse(doc.data());
+}
+
 export async function listExercises(slug: TopicSlug): Promise<Exercise[]> {
   const snap = await getAdminDb()
     .collection("topics")
