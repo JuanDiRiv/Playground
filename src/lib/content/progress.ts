@@ -81,8 +81,10 @@ export type ExerciseOutcome =
   | { kind: "sandbox"; selfReported: boolean };
 
 function isPassed(outcome: ExerciseOutcome): boolean {
-  if (outcome.kind === "worker") return outcome.total > 0 && outcome.passed === outcome.total;
-  if (outcome.kind === "conceptual") return outcome.feedback.verdict === "correct";
+  if (outcome.kind === "worker")
+    return outcome.total > 0 && outcome.passed === outcome.total;
+  if (outcome.kind === "conceptual")
+    return outcome.feedback.verdict === "correct";
   return outcome.selfReported;
 }
 

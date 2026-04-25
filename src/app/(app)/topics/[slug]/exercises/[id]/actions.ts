@@ -9,7 +9,10 @@ import {
   type ConceptualFeedback,
 } from "@/lib/ai/exercise";
 import { reserveDailyCall, RateLimitError } from "@/lib/ai/rate-limit";
-import { saveExerciseAttempt, type ExerciseOutcome } from "@/lib/content/progress";
+import {
+  saveExerciseAttempt,
+  type ExerciseOutcome,
+} from "@/lib/content/progress";
 import { TopicSlugSchema } from "@/lib/schemas/content";
 
 const FilesSchema = z.record(z.string(), z.string().max(20_000));
@@ -47,7 +50,10 @@ export async function submitExerciseAction(
 ): Promise<SubmitResult> {
   const parsed = SubmitSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+    return {
+      ok: false,
+      error: parsed.error.issues[0]?.message ?? "Invalid input",
+    };
   }
   const data = parsed.data;
 

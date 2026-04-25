@@ -146,8 +146,8 @@ function TabLink({
         <Link
             href={`/topics/${slug}?tab=${tab}`}
             className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-medium transition ${active
-                    ? "border-brand-500 text-fg"
-                    : "border-transparent text-fg-muted hover:text-fg"
+                ? "border-brand-500 text-fg"
+                : "border-transparent text-fg-muted hover:text-fg"
                 }`}
         >
             <Icon className="h-4 w-4" />
