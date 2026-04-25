@@ -1,4 +1,8 @@
-import "server-only";
+// Note: this module is intended for server use only. It is imported by
+// auth-server.ts and auth-actions.ts which both carry the `server-only`
+// marker; this file omits it so that Node scripts (e.g. scripts/seed.ts)
+// can import it directly. firebase-admin itself is Node-only and cannot
+// run in the browser.
 import {
   cert,
   getApps,

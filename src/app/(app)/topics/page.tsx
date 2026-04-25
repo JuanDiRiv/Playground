@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getSessionUser } from "@/lib/firebase/auth-server";
 import { listTopics } from "@/lib/content/queries";
 
 const COLOR_MAP: Record<string, string> = {
@@ -13,32 +12,20 @@ const COLOR_MAP: Record<string, string> = {
   emerald: "bg-emerald-500/20 text-emerald-300",
 };
 
-export default async function DashboardPage() {
-  const [user, topics] = await Promise.all([
-    getSessionUser(),
-    listTopics(),
-  ]);
+export default async function TopicsPage() {
+  const topics = await listTopics();
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Welcome back
-          {user?.displayName ? `, ${user.displayName.split(" ")[0]}` : ""} 👋
-        </h1>
-        <p className="text-fg-muted">Pick a topic to start practicing.</p>
+      <header>
+        <h1 className="text-3xl font-semibold tracking-tight">Topics</h1>
+        <p className="mt-1 text-fg-muted">
+          Pick a technology to start practicing.
+        </p>
       </header>
 
       {topics.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-bg-elevated p-10 text-center">
-          <p className="text-fg-muted">
-            No content yet. Run{" "}
-            <code className="rounded bg-bg-muted px-1.5 py-0.5 text-fg">
-              npx tsx scripts/seed.ts
-            </code>{" "}
-            to seed initial topics.
-          </p>
-        </div>
+        <EmptyState />
       ) : (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {topics.map((topic) => (
@@ -49,9 +36,7 @@ export default async function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <span
-                  className={`rounded-md px-2 py-1 text-xs font-bold ${
-                    COLOR_MAP[topic.color] ?? "bg-bg-muted text-fg"
-                  }`}
+                  className={`rounded-md px-2 py-1 text-xs font-bold ${COLOR_MAP[topic.color] ?? "bg-bg-muted text-fg"}`}
                 >
                   {topic.name}
                 </span>
@@ -63,6 +48,20 @@ export default async function DashboardPage() {
           ))}
         </section>
       )}
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="rounded-2xl border border-dashed border-border bg-bg-elevated p-10 text-center">
+      <p className="text-fg-muted">
+        No topics yet. Run{" "}
+        <code className="rounded bg-bg-muted px-1.5 py-0.5 text-fg">
+          npx tsx scripts/seed.ts
+        </code>{" "}
+        to seed initial content.
+      </p>
     </div>
   );
 }

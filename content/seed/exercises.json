@@ -1,0 +1,122 @@
+[
+  {
+    "id": "html-semantic-article",
+    "topicSlug": "html",
+    "type": "sandbox",
+    "title": "Build a semantic blog post",
+    "description": "Replace the generic divs with semantic HTML so the page has a header, navigation, an article, and a footer.",
+    "difficulty": "easy",
+    "starter": {
+      "index.html": "<div class=\"top\">My blog</div>\n<div class=\"menu\">\n  <a href=\"#\">Home</a>\n  <a href=\"#\">About</a>\n</div>\n<div class=\"post\">\n  <h1>Hello world</h1>\n  <p>First post.</p>\n</div>\n<div class=\"bottom\">© 2026</div>\n",
+      "styles.css": "body { font-family: system-ui; padding: 16px; }\n"
+    },
+    "tags": ["semantics"],
+    "tests": []
+  },
+  {
+    "id": "css-flex-center",
+    "topicSlug": "css",
+    "type": "sandbox",
+    "title": "Center a box with Flexbox",
+    "description": "Center the .box element horizontally and vertically inside .container using only flexbox properties.",
+    "difficulty": "easy",
+    "starter": {
+      "index.html": "<div class=\"container\">\n  <div class=\"box\">centered</div>\n</div>\n",
+      "styles.css": ".container {\n  display: flex;\n  justify-content: center;\n  /* TODO: align vertically */\n  height: 200px;\n  background: #1c1c25;\n  color: white;\n}\n.box {\n  padding: 16px 24px;\n  background: #6366f1;\n  border-radius: 8px;\n}\n"
+    },
+    "tags": ["flexbox", "layout"],
+    "tests": []
+  },
+  {
+    "id": "js-sum-array",
+    "topicSlug": "javascript",
+    "type": "worker",
+    "title": "Sum the elements of an array",
+    "description": "Implement `sum(arr)` that returns the sum of all numbers in the array. Empty arrays should return 0.",
+    "difficulty": "easy",
+    "starter": {
+      "solution.js": "function sum(arr) {\n  // TODO\n}\n"
+    },
+    "solution": "function sum(arr) {\n  return arr.reduce((a, b) => a + b, 0);\n}",
+    "tests": [
+      { "name": "empty array → 0", "body": "expect(sum([])).toBe(0);" },
+      { "name": "single element", "body": "expect(sum([5])).toBe(5);" },
+      { "name": "multiple elements", "body": "expect(sum([1, 2, 3, 4])).toBe(10);" },
+      { "name": "negatives", "body": "expect(sum([-1, -2, 3])).toBe(0);" }
+    ],
+    "tags": ["arrays", "fundamentals"]
+  },
+  {
+    "id": "js-debounce",
+    "topicSlug": "javascript",
+    "type": "worker",
+    "title": "Implement debounce",
+    "description": "Implement `debounce(fn, ms)` that returns a function which only invokes `fn` after `ms` milliseconds have passed since the last call. Calls before the timeout fires must reset it.",
+    "difficulty": "medium",
+    "starter": {
+      "solution.js": "function debounce(fn, ms) {\n  // TODO\n}\n"
+    },
+    "solution": "function debounce(fn, ms) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), ms);\n  };\n}",
+    "tests": [
+      {
+        "name": "calls fn after delay",
+        "body": "let calls = 0; const f = debounce(() => calls++, 20); f(); await wait(50); expect(calls).toBe(1);"
+      },
+      {
+        "name": "rapid calls collapse to one",
+        "body": "let calls = 0; const f = debounce(() => calls++, 20); f(); f(); f(); await wait(50); expect(calls).toBe(1);"
+      },
+      {
+        "name": "passes args",
+        "body": "let last; const f = debounce((x) => (last = x), 10); f(7); await wait(30); expect(last).toBe(7);"
+      }
+    ],
+    "tags": ["functions", "timing"]
+  },
+  {
+    "id": "react-counter-hook",
+    "topicSlug": "react",
+    "type": "conceptual",
+    "title": "Refactor a counter to a custom hook",
+    "description": "Given a Counter component that uses useState, extract the logic into a custom hook `useCounter(initial)` that returns `{ value, increment, decrement, reset }`.",
+    "difficulty": "easy",
+    "starter": {
+      "Counter.tsx": "import { useState } from 'react';\n\nexport function Counter() {\n  const [value, setValue] = useState(0);\n  return (\n    <div>\n      <button onClick={() => setValue((v) => v - 1)}>-</button>\n      <span>{value}</span>\n      <button onClick={() => setValue((v) => v + 1)}>+</button>\n    </div>\n  );\n}\n"
+    },
+    "rubric": "Solution should: (1) define `useCounter(initial = 0)` that returns { value, increment, decrement, reset }; (2) Counter consumes the hook; (3) functions are stable (useCallback or defined in module/closure); (4) no unnecessary re-renders.",
+    "tags": ["hooks", "refactor"]
+  },
+  {
+    "id": "next-server-action-form",
+    "topicSlug": "nextjs",
+    "type": "conceptual",
+    "title": "Add a Server Action to a form",
+    "description": "Wire a Server Action `addTodo(formData)` into the given <form>. The action must validate input with Zod and revalidate the page.",
+    "difficulty": "medium",
+    "starter": {
+      "page.tsx": "export default function Page() {\n  return (\n    <form>\n      <input name=\"title\" />\n      <button type=\"submit\">Add</button>\n    </form>\n  );\n}\n"
+    },
+    "rubric": "Solution should: (1) define an async function with 'use server' (inline or imported), (2) use FormData.get and validate with Zod, (3) call revalidatePath after the mutation, (4) handle the validation error path.",
+    "tags": ["server-actions", "forms"]
+  },
+  {
+    "id": "ts-pick-type",
+    "topicSlug": "typescript",
+    "type": "worker",
+    "title": "Type-only: PickByValue",
+    "description": "Define a type `PickByValue<T, V>` that picks the keys of T whose value type extends V. Then assert with sample types.",
+    "difficulty": "hard",
+    "starter": {
+      "solution.ts": "// type PickByValue<T, V> = ...\n\n// Used by tests:\nfunction pickByValue() { return true; }\n"
+    },
+    "solution": "type PickByValue<T, V> = { [K in keyof T as T[K] extends V ? K : never]: T[K] };",
+    "tests": [
+      {
+        "name": "smoke test",
+        "body": "expect(pickByValue()).toBe(true);"
+      }
+    ],
+    "rubric": "Use mapped types with key remapping (`as ... extends ... ? K : never`).",
+    "tags": ["generics", "mapped-types"]
+  }
+]
