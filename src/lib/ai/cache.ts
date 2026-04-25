@@ -25,9 +25,12 @@ export async function setCached<T>(
   payload: T,
   meta?: Record<string, unknown>,
 ): Promise<void> {
-  await getAdminDb().collection("ai_cache").doc(key).set({
-    payload,
-    meta: meta ?? {},
-    createdAt: new Date().toISOString(),
-  });
+  await getAdminDb()
+    .collection("ai_cache")
+    .doc(key)
+    .set({
+      payload,
+      meta: meta ?? {},
+      createdAt: new Date().toISOString(),
+    });
 }

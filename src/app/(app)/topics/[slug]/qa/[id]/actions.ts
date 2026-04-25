@@ -12,7 +12,11 @@ import { TopicSlugSchema } from "@/lib/schemas/content";
 const InputSchema = z.object({
   topicSlug: TopicSlugSchema,
   questionId: z.string().min(1),
-  answer: z.string().trim().min(1, "Write something before submitting.").max(4000),
+  answer: z
+    .string()
+    .trim()
+    .min(1, "Write something before submitting.")
+    .max(4000),
 });
 
 export type EvaluateResult =
@@ -24,7 +28,10 @@ export async function evaluateQuestionAction(
 ): Promise<EvaluateResult> {
   const parsed = InputSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+    return {
+      ok: false,
+      error: parsed.error.issues[0]?.message ?? "Invalid input",
+    };
   }
   const { topicSlug, questionId, answer } = parsed.data;
 

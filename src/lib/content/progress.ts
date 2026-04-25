@@ -27,9 +27,7 @@ export async function saveQaAttempt(input: {
   const db = getAdminDb();
   const userRef = db.collection("users").doc(input.uid);
   const attemptRef = userRef.collection("qa_attempts").doc();
-  const progressRef = userRef
-    .collection("qa_progress")
-    .doc(input.questionId);
+  const progressRef = userRef.collection("qa_progress").doc(input.questionId);
 
   const createdAt = new Date().toISOString();
   const attempt: QaAttempt = {
